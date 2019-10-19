@@ -10,7 +10,8 @@ public class MultiBlock extends BasicTechPointItem
         this.numOfBlocks = numOfBlocks;
     }
 
-    public int getNumOfBlocks() {
+    public int getNumOfBlocks()
+    {
         return numOfBlocks;
     }
 

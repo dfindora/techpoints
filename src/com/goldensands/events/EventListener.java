@@ -22,19 +22,20 @@ public class EventListener implements Listener
     {
         this.plugin = plugin;
     }
+
     @EventHandler
     public void onPlace(BlockPlaceEvent event)
     {
         Chunk currentChunk = event.getBlock().getLocation().getChunk();
         BasicTechPointItem techPointItem = plugin.getCommands().getBasicTechPointItem(event.getBlock(), null);
-        if(techPointItem != null)
+        if (techPointItem != null)
         {
             int totalTechPoints = plugin.getCommands().techPoints(currentChunk, event.getPlayer(), 0);
-            if(totalTechPoints > (int)plugin.getConfig().get("MaxTechPoints") && !event.getPlayer().hasPermission("techpoints.limit.bypass"))
+            if (totalTechPoints > (int) plugin.getConfig().get("MaxTechPoints") && !event.getPlayer().hasPermission("techpoints.limit.bypass"))
             {
                 event.getPlayer().sendMessage(ChatColor.RED + "This chunk has exceeded the tech point limit!");
                 event.getPlayer().sendMessage(ChatColor.RED + "The tech point limit is "
-                        + plugin.getConfig().get("MaxTechPoints") + ". This chunk is now at " + totalTechPoints + ".");
+                                              + plugin.getConfig().get("MaxTechPoints") + ". This chunk is now at " + totalTechPoints + ".");
                 //logToFile("Chunk " + currentChunk.getX() + ", " + currentChunk.getZ() + " has " + totalTechPoints + " tech points");
             }
         }
@@ -43,22 +44,22 @@ public class EventListener implements Listener
     private void logToFile(String message)
     {
         //file creation
-        File logFile = new File(plugin.getDataFolder(),"techlimit.log");
-        if(!logFile.exists())
+        File logFile = new File(plugin.getDataFolder(), "techlimit.log");
+        if (!logFile.exists())
         {
             try
             {
                 boolean isCreated = logFile.createNewFile();
-                if(isCreated)
+                if (isCreated)
                 {
                     Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN
-                            + "techlimit.log has been created.");
+                                                                      + "techlimit.log has been created.");
                 }
             }
             catch (IOException e)
             {
                 Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.RED
-                        + "Unable to create log file.");
+                                                                  + "Unable to create log file.");
             }
         }
 
@@ -74,7 +75,7 @@ public class EventListener implements Listener
         catch (IOException e)
         {
             Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.RED
-                    + "Error in writing to the log file.");
+                                                              + "Error in writing to the log file.");
             e.printStackTrace();
         }
     }

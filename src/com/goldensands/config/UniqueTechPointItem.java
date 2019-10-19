@@ -4,12 +4,14 @@ public class UniqueTechPointItem extends BasicTechPointItem
 {
     private String reason;
 
-    UniqueTechPointItem(int id, int data, int techPoints, String name, String reason) {
+    UniqueTechPointItem(int id, int data, int techPoints, String name, String reason)
+    {
         super(id, data, techPoints, name);
         this.reason = reason;
     }
 
-    public String getReason() {
+    public String getReason()
+    {
         return reason;
     }
 

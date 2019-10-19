@@ -9,6 +9,7 @@ public class Techpoints extends JavaPlugin
 {
     private ConfigManager configManager;
     private Commands commands = new Commands(this);
+
     @Override
     public void onEnable()
     {
@@ -39,7 +40,8 @@ public class Techpoints extends JavaPlugin
         saveConfig();
     }
 
-    ConfigManager getConfigManager() {
+    ConfigManager getConfigManager()
+    {
         return configManager;
     }
 

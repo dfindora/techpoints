@@ -13,7 +13,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConfigManager {
+public class ConfigManager
+{
     private Techpoints plugin;
 
     private File techPointsFile;
@@ -21,33 +22,47 @@ public class ConfigManager {
     private ArrayList<UniqueTechPointItem> uniqueTechPointItems;
     private ArrayList<MultiBlock> multiBlocks;
 
-    public ConfigManager(Techpoints plugin) {
+    public ConfigManager(Techpoints plugin)
+    {
         this.plugin = plugin;
     }
 
-    public void setup() {
-        if (!plugin.getDataFolder().exists()) {
+    /**
+     * techpoints.yml initialization
+     */
+    public void setup()
+    {
+
+        if (!plugin.getDataFolder().exists())
+        {
             boolean isCreated = plugin.getDataFolder().mkdir();
-            if (isCreated) {
+            if (isCreated)
+            {
                 Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN
-                        + "TechPoints directory has been created.");
+                                                                  + "TechPoints directory has been created.");
             }
         }
         techPointsFile = new File(plugin.getDataFolder(), "techpoints.yml");
         boolean isFileCreated = false;
-        if (!techPointsFile.exists()) {
-            try {
+        if (!techPointsFile.exists())
+        {
+            try
+            {
                 isFileCreated = techPointsFile.createNewFile();
-                if (isFileCreated) {
+                if (isFileCreated)
+                {
                     Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN
-                            + "techpoints.yml has been created.");
+                                                                      + "techpoints.yml has been created.");
                 }
-            } catch (IOException e) {
+            }
+            catch (IOException e)
+            {
                 Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.RED + "unable to create techpoints.yml");
             }
         }
 
-        if (isFileCreated) {
+        if (isFileCreated)
+        {
             String[] btpi = new String[]{
                     "2:0:11:grass",
                     "5:*:11:Wood Planks"
@@ -72,17 +87,17 @@ public class ConfigManager {
             FileWriter fw = new FileWriter(techPointsFile);
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write("BasicTechPointItems:\n");
-            for(String str : btpi)
+            for (String str : btpi)
             {
                 bw.write("- " + str + "\n");
             }
             bw.write("UniqueTechPointItems:\n");
-            for(String str : utpi)
+            for (String str : utpi)
             {
                 bw.write("- " + str + "\n");
             }
             bw.write("MultiBlocks:\n");
-            for(String str : mb)
+            for (String str : mb)
             {
                 bw.write("- " + str + "\n");
             }
@@ -95,13 +110,15 @@ public class ConfigManager {
         }
     }
 
-    public void reloadTechPoints() {
+    public void reloadTechPoints()
+    {
         loadTechPoints();
         Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "techpoints.yml reloaded.");
     }
 
     @SuppressWarnings("unchecked")
-    private void loadTechPoints() {
+    private void loadTechPoints()
+    {
         FileConfiguration techPointsCfg = YamlConfiguration.loadConfiguration(techPointsFile);
 
         basicTechPointItems = new ArrayList<>();
@@ -111,55 +128,68 @@ public class ConfigManager {
         List<String> uniqueTechPointItemString = (List<String>) techPointsCfg.getList("UniqueTechPointItems");
         List<String> multiBlockString = (List<String>) techPointsCfg.getList("MultiBlocks");
         boolean isValid = verifyConfiguration(basicTechPointItemString, uniqueTechPointItemString, multiBlockString);
-        if (isValid) {
-            for (String basicTechPointItem : basicTechPointItemString) {
+        if (isValid)
+        {
+            for (String basicTechPointItem : basicTechPointItemString)
+            {
                 String[] split = basicTechPointItem.split(":");
                 BasicTechPointItem btpi = (split[1].equals("*"))
-                        ? new BasicTechPointItem(Integer.parseInt(split[0]),
-                        -1, Integer.parseInt(split[2]), split[3])
-                        : new BasicTechPointItem(Integer.parseInt(split[0]),
-                        Integer.parseInt(split[1]), Integer.parseInt(split[2]), split[3]);
+                                          ? new BasicTechPointItem(Integer.parseInt(split[0]),
+                                                                   -1, Integer.parseInt(split[2]), split[3])
+                                          : new BasicTechPointItem(Integer.parseInt(split[0]),
+                                                                   Integer.parseInt(split[1]), Integer.parseInt(split[2]), split[3]);
                 basicTechPointItems.add(btpi);
             }
-            for (String uniqueTechPointItem : uniqueTechPointItemString) {
+            for (String uniqueTechPointItem : uniqueTechPointItemString)
+            {
                 String[] split = uniqueTechPointItem.split(":");
                 UniqueTechPointItem utpi = (split[1].equals("*"))
-                        ? new UniqueTechPointItem(Integer.parseInt(split[0]),
-                        -1, Integer.parseInt(split[2]), split[3], split[4])
-                        : new UniqueTechPointItem(Integer.parseInt(split[0]),
-                        Integer.parseInt(split[1]), Integer.parseInt(split[2]), split[3], split[4]);
+                                           ? new UniqueTechPointItem(Integer.parseInt(split[0]),
+                                                                     -1, Integer.parseInt(split[2]), split[3], split[4])
+                                           : new UniqueTechPointItem(Integer.parseInt(split[0]),
+                                                                     Integer.parseInt(split[1]), Integer.parseInt(split[2]), split[3], split[4]);
                 uniqueTechPointItems.add(utpi);
             }
-            for (String multiBlock : multiBlockString) {
+            for (String multiBlock : multiBlockString)
+            {
                 String[] split = multiBlock.split(":");
                 MultiBlock mb = (split[1].equals("*"))
-                        ? new MultiBlock(Integer.parseInt(split[0]),
-                        -1, Integer.parseInt(split[2]), Integer.parseInt(split[4]), split[3])
-                        : new MultiBlock(Integer.parseInt(split[0]),
-                        Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[4]), split[3]);
+                                ? new MultiBlock(Integer.parseInt(split[0]),
+                                                 -1, Integer.parseInt(split[2]), Integer.parseInt(split[4]), split[3])
+                                : new MultiBlock(Integer.parseInt(split[0]),
+                                                 Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[4]), split[3]);
                 multiBlocks.add(mb);
             }
-        } else {
+        }
+        else
+        {
             Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.RED + "Unable to load config.");
         }
     }
 
-    private boolean verifyConfiguration(List<String> basicTechPointItems, List<String> uniqueTechPointItems, List<String> multiBlocks) {
+    private boolean verifyConfiguration(List<String> basicTechPointItems, List<String> uniqueTechPointItems, List<String> multiBlocks)
+    {
         boolean isVerified = true;
-        for (String configString : basicTechPointItems) {
-            if (verifyConfigString(configString, "BasicTechPointItems")) {
+        for (String configString : basicTechPointItems)
+        {
+            if (verifyConfigString(configString, "BasicTechPointItems"))
+            {
                 isVerified = false;
                 plugin.getLogger().warning(configString + " is incorrectly formatted.");
             }
         }
-        for (String configString : uniqueTechPointItems) {
-            if (verifyConfigString(configString, "UniqueTechPointItems")) {
+        for (String configString : uniqueTechPointItems)
+        {
+            if (verifyConfigString(configString, "UniqueTechPointItems"))
+            {
                 isVerified = false;
                 plugin.getLogger().warning(configString + " is incorrectly formatted.");
             }
         }
-        for (String configString : multiBlocks) {
-            if (verifyConfigString(configString, "MultiBlocks")) {
+        for (String configString : multiBlocks)
+        {
+            if (verifyConfigString(configString, "MultiBlocks"))
+            {
                 isVerified = false;
                 plugin.getLogger().warning(configString + " is incorrectly formatted.");
             }
@@ -167,9 +197,11 @@ public class ConfigManager {
         return isVerified;
     }
 
-    private boolean verifyConfigString(String configString, String type) {
+    private boolean verifyConfigString(String configString, String type)
+    {
         boolean isValid = false;
-        switch (type) {
+        switch (type)
+        {
             case "BasicTechPointItems":
                 isValid = configString.matches("\\d*:\\d*:\\d*:.*|\\d*:\\*:\\d*:.*");
                 break;
@@ -185,15 +217,18 @@ public class ConfigManager {
         return !isValid;
     }
 
-    public ArrayList<BasicTechPointItem> getBasicTechPointItems() {
+    public ArrayList<BasicTechPointItem> getBasicTechPointItems()
+    {
         return basicTechPointItems;
     }
 
-    public ArrayList<UniqueTechPointItem> getUniqueTechPointItems() {
+    public ArrayList<UniqueTechPointItem> getUniqueTechPointItems()
+    {
         return uniqueTechPointItems;
     }
 
-    public ArrayList<MultiBlock> getMultiBlocks() {
+    public ArrayList<MultiBlock> getMultiBlocks()
+    {
         return multiBlocks;
     }
 }
