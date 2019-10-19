@@ -7,7 +7,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Techpoints extends JavaPlugin
 {
+    //ConfigManager for techpoints.yml.
     private ConfigManager configManager;
+    //Main command handler.
     private Commands commands = new Commands(this);
 
     @Override
@@ -40,11 +42,19 @@ public class Techpoints extends JavaPlugin
         saveConfig();
     }
 
+    /**
+     *
+     * @return the techpoints.yml ConfigManager.
+     */
     ConfigManager getConfigManager()
     {
         return configManager;
     }
 
+    /**
+     *
+     * @return the main Command module.
+     */
     public Commands getCommands()
     {
         return commands;
