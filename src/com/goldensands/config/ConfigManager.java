@@ -16,7 +16,6 @@ import java.util.List;
 public class ConfigManager {
     private Techpoints plugin;
 
-    private FileConfiguration techPointsCfg;
     private File techPointsFile;
     private ArrayList<BasicTechPointItem> basicTechPointItems;
     private ArrayList<UniqueTechPointItem> uniqueTechPointItems;
@@ -103,7 +102,7 @@ public class ConfigManager {
 
     @SuppressWarnings("unchecked")
     private void loadTechPoints() {
-        techPointsCfg = YamlConfiguration.loadConfiguration(techPointsFile);
+        FileConfiguration techPointsCfg = YamlConfiguration.loadConfiguration(techPointsFile);
 
         basicTechPointItems = new ArrayList<>();
         uniqueTechPointItems = new ArrayList<>();
