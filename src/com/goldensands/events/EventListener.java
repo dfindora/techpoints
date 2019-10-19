@@ -42,17 +42,6 @@ public class EventListener implements Listener
 
     private void logToFile(String message)
     {
-        //directory check
-        if(!plugin.getDataFolder().exists())
-        {
-            boolean isCreated = plugin.getDataFolder().mkdir();
-            if(isCreated)
-            {
-                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN
-                        + "TechPoints directory has been created.");
-            }
-        }
-
         //file creation
         File logFile = new File(plugin.getDataFolder(),"techlimit.log");
         if(!logFile.exists())
