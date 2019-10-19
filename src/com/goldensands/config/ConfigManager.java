@@ -32,35 +32,13 @@ public class ConfigManager
      */
     public void setup()
     {
-
-        if (!plugin.getDataFolder().exists())
-        {
-            boolean isCreated = plugin.getDataFolder().mkdir();
-            if (isCreated)
-            {
-                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN
-                                                                  + "TechPoints directory has been created.");
-            }
-        }
+        //file check
+        directoryCheck();
         techPointsFile = new File(plugin.getDataFolder(), "techpoints.yml");
-        boolean isFileCreated = false;
-        if (!techPointsFile.exists())
-        {
-            try
-            {
-                isFileCreated = techPointsFile.createNewFile();
-                if (isFileCreated)
-                {
-                    Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN
-                                                                      + "techpoints.yml has been created.");
-                }
-            }
-            catch (IOException e)
-            {
-                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.RED + "unable to create techpoints.yml");
-            }
-        }
+        boolean isFileCreated = fileCheck(techPointsFile);
 
+        //defaults creation
+        //TODO: hard-coded defaults. move to a seperate default config file.
         if (isFileCreated)
         {
             String[] btpi = new String[]{
@@ -76,10 +54,57 @@ public class ConfigManager
             copyDefaults(btpi, utpi, mb);
         }
         loadTechPoints();
-
-
     }
 
+    /**
+     * verifies that the plugin's data folder exists. If it does not, it is created.
+     */
+    private void directoryCheck()
+    {
+        if (!plugin.getDataFolder().exists())
+        {
+            boolean isCreated = plugin.getDataFolder().mkdir();
+            if (isCreated)
+            {
+                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN
+                                                                  + "TechPoints directory has been created.");
+            }
+        }
+    }
+
+    /**
+     * verifies if the specified config file is created. If it is not, it is created.
+     * @param file - config file to check
+     * @return if it is created, true. Otherwise, false.
+     */
+    private boolean fileCheck(File file)
+    {
+        boolean isFileCreated = false;
+        if (!file.exists())
+        {
+            try
+            {
+                isFileCreated = file.createNewFile();
+                if (isFileCreated)
+                {
+                    Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN
+                                                                      + "techpoints.yml has been created.");
+                }
+            }
+            catch (IOException e)
+            {
+                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.RED + "unable to create techpoints.yml");
+            }
+        }
+        return isFileCreated;
+    }
+
+    /**
+     * writes the defaults to the techpoints.yml file.
+     * @param btpi - BasicTechPointItem defaults
+     * @param utpi - UniqueTechPointItem defaults
+     * @param mb - MultiBlock defaults
+     */
     private void copyDefaults(String[] btpi, String[] utpi, String[] mb)
     {
         try
@@ -110,26 +135,38 @@ public class ConfigManager
         }
     }
 
+    /**
+     * reloads techpoints.yml.
+     */
     public void reloadTechPoints()
     {
         loadTechPoints();
         Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "techpoints.yml reloaded.");
     }
 
+    /**
+     * pre-loads the techpoints.yml values into this ConfigManager.
+     */
     @SuppressWarnings("unchecked")
     private void loadTechPoints()
     {
         FileConfiguration techPointsCfg = YamlConfiguration.loadConfiguration(techPointsFile);
 
+        //array initialization
         basicTechPointItems = new ArrayList<>();
         uniqueTechPointItems = new ArrayList<>();
         multiBlocks = new ArrayList<>();
+        //load lists from config
         List<String> basicTechPointItemString = (List<String>) techPointsCfg.getList("BasicTechPointItems");
         List<String> uniqueTechPointItemString = (List<String>) techPointsCfg.getList("UniqueTechPointItems");
         List<String> multiBlockString = (List<String>) techPointsCfg.getList("MultiBlocks");
+        //verify config is properly formatted before loading. If there is any errors in the config, it can't be loaded.
+        //TODO:instead of not loading the config at all, maybe it should just remove invalid config entries?
         boolean isValid = verifyConfiguration(basicTechPointItemString, uniqueTechPointItemString, multiBlockString);
+        //populate arrays
         if (isValid)
         {
+            //BasicTechPointItems
             for (String basicTechPointItem : basicTechPointItemString)
             {
                 String[] split = basicTechPointItem.split(":");
@@ -140,6 +177,7 @@ public class ConfigManager
                                                                    Integer.parseInt(split[1]), Integer.parseInt(split[2]), split[3]);
                 basicTechPointItems.add(btpi);
             }
+            //UniqueTechPointItems
             for (String uniqueTechPointItem : uniqueTechPointItemString)
             {
                 String[] split = uniqueTechPointItem.split(":");
@@ -150,6 +188,7 @@ public class ConfigManager
                                                                      Integer.parseInt(split[1]), Integer.parseInt(split[2]), split[3], split[4]);
                 uniqueTechPointItems.add(utpi);
             }
+            //MultiBlocks
             for (String multiBlock : multiBlockString)
             {
                 String[] split = multiBlock.split(":");
@@ -167,12 +206,19 @@ public class ConfigManager
         }
     }
 
+    /**
+     * verifies that the whole techpoints.yml configuration file is properly formatted.
+     * @param basicTechPointItems - list of BasicTechPointItem config strings.
+     * @param uniqueTechPointItems - list of UniqueTechPointItem config strings.
+     * @param multiBlocks - list of MultiBlock config strings.
+     * @return if the whole configuration is properly formatted, it returns true. Otherwise, it returns false.
+     */
     private boolean verifyConfiguration(List<String> basicTechPointItems, List<String> uniqueTechPointItems, List<String> multiBlocks)
     {
         boolean isVerified = true;
         for (String configString : basicTechPointItems)
         {
-            if (verifyConfigString(configString, "BasicTechPointItems"))
+            if (verifyConfigString(configString, "BasicTechPointItem"))
             {
                 isVerified = false;
                 plugin.getLogger().warning(configString + " is incorrectly formatted.");
@@ -180,7 +226,7 @@ public class ConfigManager
         }
         for (String configString : uniqueTechPointItems)
         {
-            if (verifyConfigString(configString, "UniqueTechPointItems"))
+            if (verifyConfigString(configString, "UniqueTechPointItem"))
             {
                 isVerified = false;
                 plugin.getLogger().warning(configString + " is incorrectly formatted.");
@@ -188,7 +234,7 @@ public class ConfigManager
         }
         for (String configString : multiBlocks)
         {
-            if (verifyConfigString(configString, "MultiBlocks"))
+            if (verifyConfigString(configString, "MultiBlock"))
             {
                 isVerified = false;
                 plugin.getLogger().warning(configString + " is incorrectly formatted.");
@@ -197,18 +243,27 @@ public class ConfigManager
         return isVerified;
     }
 
+    /**
+     * verifies a specific string.
+     * @param configString - the string to verify.
+     * @param type - the name of the type of TechPointItem it is. current valid types are:
+     *             BasicTechPointItem
+     *             UniqueTechPointItem
+     *             MultiBlock
+     * @return if the string is valid, it returns true. Otherwise, it returns false.
+     */
     private boolean verifyConfigString(String configString, String type)
     {
         boolean isValid = false;
         switch (type)
         {
-            case "BasicTechPointItems":
+            case "BasicTechPointItem":
                 isValid = configString.matches("\\d*:\\d*:\\d*:.*|\\d*:\\*:\\d*:.*");
                 break;
-            case "UniqueTechPointItems":
+            case "UniqueTechPointItem":
                 isValid = configString.matches("\\d*:\\d*:\\d*:.*:.*|\\d*:\\*:\\d*:.*:.*");
                 break;
-            case "MultiBlocks":
+            case "MultiBlock":
                 isValid = configString.matches("\\d*:\\d*:\\d*:.*:\\d*|\\d*:\\*:\\d*:.*:\\d*");
                 break;
             default:
@@ -217,16 +272,28 @@ public class ConfigManager
         return !isValid;
     }
 
+    /**
+     *
+     * @return the list of BasicTechPointItems from techpoints.yml.
+     */
     public ArrayList<BasicTechPointItem> getBasicTechPointItems()
     {
         return basicTechPointItems;
     }
 
+    /**
+     *
+     * @return the list of UniqueTechPointItems from techpoints.yml
+     */
     public ArrayList<UniqueTechPointItem> getUniqueTechPointItems()
     {
         return uniqueTechPointItems;
     }
 
+    /**
+     *
+     * @return the list of MultiBlocks from techpoints.yml.
+     */
     public ArrayList<MultiBlock> getMultiBlocks()
     {
         return multiBlocks;
