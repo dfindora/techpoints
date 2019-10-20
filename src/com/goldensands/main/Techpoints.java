@@ -2,6 +2,7 @@ package com.goldensands.main;
 
 import com.goldensands.config.ConfigManager;
 import com.goldensands.events.EventListener;
+import com.goldensands.modules.ModuleHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -11,6 +12,8 @@ public class Techpoints extends JavaPlugin
     private ConfigManager configManager;
     //Main command handler.
     private Commands commands = new Commands(this);
+    //Module handler - used to process most things
+    private ModuleHandler moduleHandler;
 
     @Override
     public void onEnable()
@@ -39,6 +42,8 @@ public class Techpoints extends JavaPlugin
         getConfig().options().copyDefaults(true);
         configManager = new ConfigManager(this);
         configManager.setup();
+        moduleHandler = new ModuleHandler(this);
+        moduleHandler.setup();
         saveConfig();
     }
 
@@ -58,5 +63,10 @@ public class Techpoints extends JavaPlugin
     public Commands getCommands()
     {
         return commands;
+    }
+
+    public ModuleHandler getModuleHandler()
+    {
+        return moduleHandler;
     }
 }
