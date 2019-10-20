@@ -51,7 +51,7 @@ public class Techpoints extends JavaPlugin
      *
      * @return the techpoints.yml ConfigManager.
      */
-    ConfigManager getConfigManager()
+    public ConfigManager getConfigManager()
     {
         return configManager;
     }

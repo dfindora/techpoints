@@ -3,8 +3,10 @@ package com.goldensands.config;
 import com.goldensands.main.Techpoints;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -273,29 +275,57 @@ public class ConfigManager
     }
 
     /**
-     *
-     * @return the list of BasicTechPointItems from techpoints.yml.
+     * Matches a block or item to a config item if possible.
+     * @param block - the block to match. If this is being used to match an item instead, leave this null.
+     * @param hotbar - the item to match. If this is being used to match a block instead, leave this null.
+     * @return If the block or item matched a config item, that item will be returned. If not, this returns null.
      */
-    public ArrayList<BasicTechPointItem> getBasicTechPointItems()
+    @SuppressWarnings({"deprecation"})
+    public BasicTechPointItem configMatch(Block block, ItemStack hotbar)
     {
-        return basicTechPointItems;
-    }
+        BasicTechPointItem btpi = null;
+        BasicTechPointItem compareTo = (block != null)
+                                       ? new BasicTechPointItem(block.getTypeId(), block.getData(), 0,
+                                                                block.getType().name())
+                                       : new BasicTechPointItem(hotbar.getTypeId(), hotbar.getDurability(), 0,
+                                                                hotbar.getType().name());
+        boolean found = false;
+        if ((block != null && block.getTypeId() != 0) || (hotbar != null && hotbar.getTypeId() != 0))
+        {
+            for (BasicTechPointItem basicTechPointItem : basicTechPointItems)
+            {
+                if (basicTechPointItem.compareTo(compareTo) == 0)
+                {
+                    btpi = basicTechPointItem;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+            {
+                for (UniqueTechPointItem uniqueTechPointItem : uniqueTechPointItems)
+                {
+                    if (uniqueTechPointItem.compareTo(compareTo) == 0)
+                    {
+                        btpi = uniqueTechPointItem;
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if (!found)
+            {
 
-    /**
-     *
-     * @return the list of UniqueTechPointItems from techpoints.yml
-     */
-    public ArrayList<UniqueTechPointItem> getUniqueTechPointItems()
-    {
-        return uniqueTechPointItems;
-    }
-
-    /**
-     *
-     * @return the list of MultiBlocks from techpoints.yml.
-     */
-    public ArrayList<MultiBlock> getMultiBlocks()
-    {
-        return multiBlocks;
+                for (MultiBlock multiBlock : multiBlocks)
+                {
+                    if (multiBlock.compareTo(compareTo) == 0)
+                    {
+                        btpi = multiBlock;
+                        break;
+                    }
+                }
+            }
+        }
+        return btpi;
     }
 }
