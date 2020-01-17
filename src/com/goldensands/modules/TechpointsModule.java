@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +51,7 @@ public class TechpointsModule
         HashMap<Block, BasicTechPointItem> techPointBlocks = new HashMap<>();
         //MultiBlocks with their total amounts. Used for MultiBlock recalculations.
         HashMap<MultiBlock, Integer> multiBlockCounts = new HashMap<>();
+        ArrayList<Block> cursedEarth = new ArrayList<>();
         int maxY = currentChunk.getWorld().getMaxHeight();
         for (int y = 0; y < maxY; y++)
         {
@@ -60,6 +62,29 @@ public class TechpointsModule
                     Block currentBlock = currentChunk.getBlock(x, y, z);
                     if (currentBlock.getType() != Material.AIR)
                     {
+                        int spawnerType = spawnerCheck(currentBlock);
+                        //block is cursed earth
+                        if(spawnerType == 1 && plugin.getConfig().getBoolean("Spwaners.CursedEarth.enabled"))
+                        {
+                            cursedEarth.add(currentBlock);
+                        }
+                        //block is stabilized spawner
+                        else if(spawnerType == 2 && plugin.getConfig().getBoolean("Spawners.StabilizedMobSpwaner"
+                                                                                + ".enabled"))
+                        {
+                            totalTechPoints = (currentBlock.getBlockPower() == 0)
+                                              ? totalTechPoints + (Integer)plugin.getConfig()
+                                                    .getList("Spawners.StabilizedMobSpawner.techpoints").get(0)
+                                              : totalTechPoints;
+                        }
+                        //block is a powered spawner
+                        else if(spawnerType == 3 && plugin.getConfig().getBoolean("Spawners.PoweredSpawner.enabled"))
+                        {
+                            totalTechPoints = (currentBlock.getBlockPower() > 0)
+                                              ? totalTechPoints + (Integer)plugin.getConfig()
+                                                    .getList("Spawners.PoweredSpawner.techpoints").get(0)
+                                              : totalTechPoints;
+                        }
                         BasicTechPointItem techPointItem = plugin.getConfigManager().configMatch(currentBlock, null);
                         if (techPointItem != null)
                         {
@@ -83,6 +108,9 @@ public class TechpointsModule
                 }
             }
         }
+        //add cursed earth techpoints
+        totalTechPoints += plugin.getConfig().getInt("Spawners.CursedEarth.techpoints") *
+                (cursedEarth.size() / plugin.getConfig().getInt("Spawners.CursedEarth.size"));
         //multiblock recalculation
         for (Map.Entry<MultiBlock, Integer> multiBlockCount : multiBlockCounts.entrySet())
         {
@@ -184,5 +212,32 @@ public class TechpointsModule
                 sender.sendMessage("for a full list of items in this chunk with techpoints, type /techlist");
             }
         }
+    }
+
+    @SuppressWarnings("deprecation")
+    private int spawnerCheck(Block block)
+    {
+        int type = 0;
+        String blockID = block.getTypeId() + ":" + block.getData();
+        String cursedEarth = plugin.getConfig().getString("Spawners.CursedEarth.id") + ":"
+                              + plugin.getConfig().getString("Spawners.CursedEarth.metadata");
+        String stabilized = plugin.getConfig().getString("Spawners.StabilizedMobSpawner.id") + ":"
+                            + plugin.getConfig().getString("Spawners.StabilizedMobSpawner.metadata");
+        String powered = plugin.getConfig().getString("Spawners.PoweredSpawner.id") + ":"
+                            + plugin.getConfig().getString("Spawners.PoweredSpawner.metadata");
+        if (blockID.equals(cursedEarth))
+        {
+            type = 1;
+        }
+        else if(blockID.equals(stabilized))
+        {
+            type = 2;
+        }
+        else if(blockID.equals(powered))
+        {
+            type = 3;
+        }
+
+        return type;
     }
 }
