@@ -29,7 +29,7 @@ public class TechpointsModule
     public TechChunk techPoints(Player sender)
     {
         Chunk currentChunk = sender.getLocation().getChunk();
-        return techPoints(currentChunk);
+        return techPoints(currentChunk, sender);
     }
 
     /**
@@ -43,8 +43,9 @@ public class TechpointsModule
      *  - a map that matches the TechPointItem from the config with the location where it was found
      *  - a map that matches a MultiBlock with its total count
      */
-    private TechChunk techPoints(Chunk currentChunk)
+    private TechChunk techPoints(Chunk currentChunk, Player sender)
     {
+        plugin.getLogger().info("techpoints");
         //Calculate tech points
         int totalTechPoints = 0;
         //The map of TechPointItems mapped to the block in which they are located. Used for /techlist printouts.
@@ -64,12 +65,12 @@ public class TechpointsModule
                     {
                         int spawnerType = spawnerCheck(currentBlock);
                         //block is cursed earth
-                        if(spawnerType == 1 && plugin.getConfig().getBoolean("Spwaners.CursedEarth.enabled"))
+                        if(spawnerType == 1 && plugin.getConfig().getBoolean("Spawners.CursedEarth.enabled"))
                         {
                             cursedEarth.add(currentBlock);
                         }
                         //block is stabilized spawner
-                        else if(spawnerType == 2 && plugin.getConfig().getBoolean("Spawners.StabilizedMobSpwaner"
+                        else if(spawnerType == 2 && plugin.getConfig().getBoolean("Spawners.StabilizedMobSpawner"
                                                                                 + ".enabled"))
                         {
                             totalTechPoints = (currentBlock.getBlockPower() == 0)
@@ -110,7 +111,7 @@ public class TechpointsModule
         }
         //add cursed earth techpoints
         totalTechPoints += plugin.getConfig().getInt("Spawners.CursedEarth.techpoints") *
-                (cursedEarth.size() / plugin.getConfig().getInt("Spawners.CursedEarth.size"));
+                Math.ceil((double)cursedEarth.size() / plugin.getConfig().getInt("Spawners.CursedEarth.size"));
         //multiblock recalculation
         for (Map.Entry<MultiBlock, Integer> multiBlockCount : multiBlockCounts.entrySet())
         {

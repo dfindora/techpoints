@@ -40,11 +40,11 @@ public class Commands implements Listener, CommandExecutor
     @SuppressWarnings({"deprecation", "unchecked"})
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args)
     {
-        List<String> airBlockList = (List<String>) plugin.getConfig().getList("WailaBlacklist");
+        List<Integer> airBlockList = (List<Integer>) plugin.getConfig().getList("WailaBlacklist");
         HashSet<Byte> airBlocks = new HashSet<>();
-        for (String airBlock : airBlockList)
+        for (int airBlock : airBlockList)
         {
-            airBlocks.add(Byte.parseByte(airBlock));
+            airBlocks.add((byte)airBlock);
         }
         airBlocks.add((byte) 0);
         airBlocks.add((byte) 1316);
