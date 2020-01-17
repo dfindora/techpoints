@@ -166,7 +166,7 @@ public class TechpointsModule
         //techpoints messages
         if (messageLevel >= 1)
         {
-            if (techChunk.getTechPoints() < (int) plugin.getConfig().get("MaxTechPoints"))
+            if (techChunk.getTechPoints() <= (int) plugin.getConfig().get("MaxTechPoints"))
             {
                 sender.sendMessage("Total tech points for chunk (" + techChunk.getChunk().getX() + ", "
                                    + techChunk.getChunk().getZ()
