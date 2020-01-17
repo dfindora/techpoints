@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashSet;
+import java.util.List;
 
 public class Commands implements Listener, CommandExecutor
 {
@@ -36,10 +37,15 @@ public class Commands implements Listener, CommandExecutor
      * @return true of the command was executed successfully, otherwise false.
      */
     @Override
-    @SuppressWarnings({"deprecation"})
+    @SuppressWarnings({"deprecation", "unchecked"})
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args)
     {
+        List<String> airBlockList = (List<String>) plugin.getConfig().getList("WailaBlacklist");
         HashSet<Byte> airBlocks = new HashSet<>();
+        for (String airBlock : airBlockList)
+        {
+            airBlocks.add(Byte.parseByte(airBlock));
+        }
         airBlocks.add((byte) 0);
         airBlocks.add((byte) 1316);
         //techconfig
