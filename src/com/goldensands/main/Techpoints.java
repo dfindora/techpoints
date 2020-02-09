@@ -24,6 +24,7 @@ public class Techpoints extends JavaPlugin
         getCommand(commands.techList).setExecutor(commands);
         getCommand(commands.techLimit).setExecutor(commands);
         getCommand(commands.techConfig).setExecutor(commands);
+        getCommand(commands.techWand).setExecutor(commands);
         getLogger().info("commands registered.");
         getLogger().info("loading configs...");
         loadConfiguration();
