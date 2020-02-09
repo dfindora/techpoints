@@ -20,6 +20,8 @@ public class WandModule
     public WandModule(Techpoints plugin)
     {
         this.plugin = plugin;
+        firstPositions = new HashMap<>();
+        secondPositions = new HashMap<>();
     }
 
     public void pos(double x, double y, double z, UUID uuid, boolean isLeft)
