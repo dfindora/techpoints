@@ -29,7 +29,7 @@ public class TechpointsModule
     public TechChunk techPoints(Player sender)
     {
         Chunk currentChunk = sender.getLocation().getChunk();
-        return techPoints(currentChunk, sender);
+        return techPoints(currentChunk);
     }
 
     /**
@@ -43,9 +43,8 @@ public class TechpointsModule
      *  - a map that matches the TechPointItem from the config with the location where it was found
      *  - a map that matches a MultiBlock with its total count
      */
-    public TechChunk techPoints(Chunk currentChunk, Player sender)
+    public TechChunk techPoints(Chunk currentChunk)
     {
-        plugin.getLogger().info("techpoints");
         //Calculate tech points
         int totalTechPoints = 0;
         //The map of TechPointItems mapped to the block in which they are located. Used for /techlist printouts.

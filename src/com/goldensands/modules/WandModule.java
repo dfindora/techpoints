@@ -159,7 +159,7 @@ public class WandModule
         ArrayList<TechChunk> techChunks = new ArrayList<>();
         for(Chunk chunk : chunks)
         {
-            techChunks.add(plugin.getModuleHandler().getTechpointsModule().techPoints(chunk, sender));
+            techChunks.add(plugin.getModuleHandler().getTechpointsModule().techPoints(chunk));
         }
         sender.sendMessage("list of chunks: ");
         for(TechChunk techChunk : techChunks)
