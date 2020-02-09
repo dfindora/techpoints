@@ -58,22 +58,90 @@ public class WandModule
         Coordinate pos2 = secondPositions.getOrDefault(player.getUniqueId(), null);
         if(pos1 != null && pos2 != null)
         {
-            for (double x = pos1.getX(); x <= pos2.getX(); x += 16)
+            if (pos1.getX() <= pos2.getX() && pos1.getZ() <= pos2.getZ())
             {
-                for (double z = pos2.getZ(); z <= pos2.getZ(); z += 16)
+                for (double x = pos1.getX(); x <= pos2.getX(); x += 16)
                 {
-                    Location location = new Location(world, x, pos1.getY(), z);
-                    chunks.add(world.getChunkAt(location));
-                    //check if pos2.getZ is in a different chunk and would be passed up normally
-                    if (z + 16 > pos2.getZ() && (int) (pos2.getZ() / 16) != (int) (pos1.getZ() / 16))
+                    System.out.println("x = " + x);
+                    for (double z = pos1.getZ(); z <= pos2.getZ(); z += 16)
                     {
-                        z = pos2.getZ() - 16;
+                        Location location = new Location(world, x, pos1.getY(), z);
+                        chunks.add(world.getChunkAt(location));
+                        //check if pos2.getZ is in a different chunk and would be passed up normally
+                        if (z != pos2.getZ() && z + 16 > pos2.getZ() && (int) (pos2.getZ() / 16) != (int) (pos1.getZ() / 16))
+                        {
+                            z = pos2.getZ() - 16;
+                        }
+                    }
+                    //check if pos2.getX is in a different chunk and would be passed up normally
+                    if (x != pos2.getX() && x + 16 > pos2.getX() && (int) (pos2.getX() / 16) != (int) (pos1.getX() / 16))
+                    {
+                        x = pos2.getX() - 16;
                     }
                 }
-                //check if pos2.getX is in a different chunk and would be passed up normally
-                if (x + 16 > pos2.getX() && (int) (pos2.getX() / 16) != (int) (pos1.getX() / 16))
+            }
+            else if (pos1.getX() <= pos2.getX())
+            {
+                for (double x = pos1.getX(); x <= pos2.getX(); x += 16)
                 {
-                    x = pos2.getX() - 16;
+                    System.out.println("x = " + x);
+                    for (double z = pos1.getZ(); z >= pos2.getZ(); z -= 16)
+                    {
+                        Location location = new Location(world, x, pos1.getY(), z);
+                        chunks.add(world.getChunkAt(location));
+                        //check if pos2.getZ is in a different chunk and would be passed up normally
+                        if (z != pos2.getZ() && z - 16 < pos2.getZ() && (int) (pos2.getZ() / 16) != (int) (pos1.getZ() / 16))
+                        {
+                            z = pos2.getZ() + 16;
+                        }
+                    }
+                    //check if pos2.getX is in a different chunk and would be passed up normally
+                    if (x != pos2.getX() && x + 16 > pos2.getX() && (int) (pos2.getX() / 16) != (int) (pos1.getX() / 16))
+                    {
+                        x = pos2.getX() - 16;
+                    }
+                }
+            }
+            else if(pos1.getZ() <= pos2.getZ())
+            {
+                for (double x = pos1.getX(); x >= pos2.getX(); x -= 16)
+                {
+                    for (double z = pos1.getZ(); z <= pos2.getZ(); z += 16)
+                    {
+                        Location location = new Location(world, x, pos1.getY(), z);
+                        chunks.add(world.getChunkAt(location));
+                        //check if pos2.getZ is in a different chunk and would be passed up normally
+                        if (z != pos2.getZ() && z + 16 > pos2.getZ() && (int) (pos2.getZ() / 16) != (int) (pos1.getZ() / 16))
+                        {
+                            z = pos2.getZ() - 16;
+                        }
+                    }
+                    //check if pos2.getX is in a different chunk and would be passed up normally
+                    if (x != pos2.getX() && x - 16 < pos2.getX() && (int) (pos2.getX() / 16) != (int) (pos1.getX() / 16))
+                    {
+                        x = pos2.getX() + 16;
+                    }
+                }
+            }
+            else
+            {
+                for (double x = pos1.getX(); x >= pos2.getX(); x -= 16)
+                {
+                    for (double z = pos1.getZ(); z >= pos2.getZ(); z -= 16)
+                    {
+                        Location location = new Location(world, x, pos1.getY(), z);
+                        chunks.add(world.getChunkAt(location));
+                        //check if pos2.getZ is in a different chunk and would be passed up normally
+                        if (z != pos2.getZ() && z - 16 < pos2.getZ() && (int) (pos2.getZ() / 16) != (int) (pos1.getZ() / 16))
+                        {
+                            z = pos2.getZ() + 16;
+                        }
+                    }
+                    //check if pos2.getX is in a different chunk and would be passed up normally
+                    if (x != pos2.getX() && x - 16 < pos2.getX() && (int) (pos2.getX() / 16) != (int) (pos1.getX() / 16))
+                    {
+                        x = pos2.getX() + 16;
+                    }
                 }
             }
             return chunks;
@@ -93,12 +161,14 @@ public class WandModule
         {
             techChunks.add(plugin.getModuleHandler().getTechpointsModule().techPoints(chunk, sender));
         }
+        sender.sendMessage("list of chunks: ");
         for(TechChunk techChunk : techChunks)
         {
             if(techChunk.getTechPoints() > plugin.getConfig().getInt("MaxTechPoints"))
             {
                 sender.sendMessage(ChatColor.RED + "Techpoints for chunk (" + techChunk.getChunk().getX() + ", "
                                    + techChunk.getChunk().getZ() + "): " + techChunk.getTechPoints());
+
             }
             else
             {

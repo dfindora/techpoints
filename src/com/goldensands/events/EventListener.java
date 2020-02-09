@@ -55,11 +55,13 @@ public class EventListener implements Listener
             {
                 plugin.getModuleHandler().getWandModule().pos(block.getX(), block.getY(), block.getZ(),
                                                                event.getPlayer().getUniqueId(), true);
+                event.getPlayer().sendMessage("position 1 set at " + block.getX() + ", " + block.getY() + ", " + block.getZ() + ".");
             }
             else if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
             {
                 plugin.getModuleHandler().getWandModule().pos(block.getX(), block.getY(), block.getZ(),
                                                                event.getPlayer().getUniqueId(), false);
+                event.getPlayer().sendMessage("position 2 set at " + block.getX() + ", " + block.getY() + ", " + block.getZ() + ".");
             }
         }
     }

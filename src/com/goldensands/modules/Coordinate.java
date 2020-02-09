@@ -33,4 +33,10 @@ public class Coordinate implements Comparable<Coordinate>
     {
         return (this.x == coordinate.x && this.y == coordinate.y && this.z == coordinate.z) ? 0 : 1;
     }
+
+    @Override
+    public String toString()
+    {
+        return x + ", " + y + ", " + z;
+    }
 }
