@@ -10,6 +10,7 @@ public class ModuleHandler
     private Techpoints plugin;
     private FileModule fileModule;
     private TechpointsModule techpointsModule;
+    private WandModule wandModule;
 
     public ModuleHandler(Techpoints plugin)
     {
@@ -24,6 +25,7 @@ public class ModuleHandler
         fileModule = new FileModule(plugin);
         fileModule.setup();
         techpointsModule = new TechpointsModule(plugin);
+        wandModule = new WandModule(plugin);
     }
 
     /**
@@ -38,5 +40,10 @@ public class ModuleHandler
     public TechpointsModule getTechpointsModule()
     {
         return techpointsModule;
+    }
+
+    public WandModule getWandModule()
+    {
+        return wandModule;
     }
 }

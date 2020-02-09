@@ -39,3 +39,9 @@ commands:
         aliases: [tcnf, tcfg, tconfig]
         permission: techpoints.techconfig
         permission-message: you don't have permission to use /techconfig.
+    techwand:
+        usage: /<command>
+        description: spawns the wand used for counting techpoints in bulk.
+        aliases: [twand, twnd]
+        permission: techpoints.techwand
+        permission-message: you do not have permission to use /techwand.

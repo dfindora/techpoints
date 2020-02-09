@@ -3,9 +3,12 @@ package com.goldensands.events;
 import com.goldensands.config.BasicTechPointItem;
 import com.goldensands.main.Techpoints;
 import org.bukkit.ChatColor;
+import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 public class EventListener implements Listener
 {
@@ -35,6 +38,28 @@ public class EventListener implements Listener
                 event.getPlayer().sendMessage(ChatColor.RED + "The tech point limit is "
                                               + plugin.getConfig().get("MaxTechPoints") + ". This chunk is now at " + totalTechPoints + ".");
                 //logToFile("Chunk " + currentChunk.getX() + ", " + currentChunk.getZ() + " has " + totalTechPoints + " tech points");
+            }
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    @EventHandler
+    public void onInteract(PlayerInteractEvent event)
+    {
+        if(event.getItem().getTypeId() == plugin.getConfig().getInt("techwand.id")
+           && event.getItem().getDurability() == plugin.getConfig().getInt("techwand.metadata")
+           && event.getPlayer().hasPermission("techpoints.techwand"))
+        {
+            Block block = event.getClickedBlock();
+            if(event.getAction().equals(Action.LEFT_CLICK_BLOCK))
+            {
+                plugin.getModuleHandler().getWandModule().pos(block.getX(), block.getY(), block.getZ(),
+                                                               event.getPlayer().getUniqueId(), true);
+            }
+            else if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+            {
+                plugin.getModuleHandler().getWandModule().pos(block.getX(), block.getY(), block.getZ(),
+                                                               event.getPlayer().getUniqueId(), false);
             }
         }
     }

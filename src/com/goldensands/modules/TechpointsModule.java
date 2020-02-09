@@ -43,7 +43,7 @@ public class TechpointsModule
      *  - a map that matches the TechPointItem from the config with the location where it was found
      *  - a map that matches a MultiBlock with its total count
      */
-    private TechChunk techPoints(Chunk currentChunk, Player sender)
+    public TechChunk techPoints(Chunk currentChunk, Player sender)
     {
         plugin.getLogger().info("techpoints");
         //Calculate tech points
