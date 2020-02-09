@@ -194,7 +194,7 @@ public class Commands implements Listener, CommandExecutor
         {
             if(sender.hasPermission("techpoints.techwand"))
             {
-                if(args[0].equalsIgnoreCase("count"))
+                if(args.length > 0 && args[0].equalsIgnoreCase("count"))
                 {
                     plugin.getModuleHandler().getWandModule().regionTechpoints((Player)sender);
                 }
