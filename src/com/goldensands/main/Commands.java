@@ -3,6 +3,7 @@ package com.goldensands.main;
 import com.goldensands.config.BasicTechPointItem;
 import com.goldensands.modules.TechChunk;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -22,6 +23,7 @@ public class Commands implements Listener, CommandExecutor
     String techList = "techlist";
     String techLimit = "techlimit";
     String techConfig = "techconfig";
+    String techWand = "techwand";
 
     Commands(Techpoints plugin)
     {
@@ -179,6 +181,36 @@ public class Commands implements Listener, CommandExecutor
                         .techPoints((Player)sender);
                 plugin.getModuleHandler().getTechpointsModule()
                         .techPointsMessages(techChunk, (Player)sender, 2);
+                return true;
+            }
+            else
+            {
+                sender.sendMessage(ChatColor.RED + "" + command.getPermissionMessage());
+                return true;
+            }
+        }
+        //techwand
+        else if(command.getName().equalsIgnoreCase(techWand))
+        {
+            if(sender.hasPermission("techpoints.techwand"))
+            {
+                if(args[0].equalsIgnoreCase("count"))
+                {
+                    plugin.getModuleHandler().getWandModule().regionTechpoints((Player)sender);
+                }
+                else
+                {
+                    ItemStack wand = new ItemStack(plugin.getConfig().getInt("techwand.id"), 1,
+                                                   (short)plugin.getConfig().getInt("techwand.metadata"));
+                    if(((Player) sender).getItemInHand().getType() == Material.AIR)
+                    {
+                        ((Player) sender).setItemInHand(wand);
+                    }
+                    else
+                    {
+                        ((Player) sender).getInventory().addItem(wand);
+                    }
+                }
                 return true;
             }
             else
