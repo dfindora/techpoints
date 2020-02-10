@@ -18,25 +18,21 @@ public class DatabaseModule
 
     public void setup()
     {
-        try (Connection conn = connect()) {
-            if(conn != null)
-            {
-                plugin.getLogger().info("Database connection successful.");
-                String sql = "CREATE TABLE IF NOT EXISTS chunks ("
-                             + "x integer  NOT NULL, "
-                             + "z integer NOT NULL, "
-                             + "techpoints integer NOT NULL,"
-                             + "PRIMARY KEY (x, z)"
-                             + ");";
-
-                Statement statement = conn.createStatement();
-                statement.execute(sql);
-            }
-            else
-            {
-                plugin.getLogger().warning("Database conection failed.");
-            }
-        } catch (SQLException e) {
+        String sql = "CREATE TABLE IF NOT EXISTS chunks ("
+                     + "x integer  NOT NULL, "
+                     + "z integer NOT NULL, "
+                     + "techpoints integer NOT NULL,"
+                     + "PRIMARY KEY (x, z)"
+                     + ");";
+        try (Connection conn = connect();
+             Statement statement = conn.createStatement())
+        {
+            plugin.getLogger().info("Database connection successful.");
+            statement.execute(sql);
+        }
+        catch (SQLException e)
+        {
+            plugin.getLogger().warning("Database conection failed.");
             System.out.println(e.getMessage());
         }
     }
@@ -45,9 +41,12 @@ public class DatabaseModule
     {
         String url = "jdbc:sqlite:" + dbFilename;
         Connection conn = null;
-        try {
+        try
+        {
             conn = DriverManager.getConnection(url);
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             System.out.println(e.getMessage());
         }
         return conn;
@@ -55,11 +54,10 @@ public class DatabaseModule
 
     public void addChunk(int x, int z, int techpoints)
     {
-        String url = "jdbc:sqlite:" + dbFilename;
-        try (Connection conn = connect())
+        String sql = "INSERT OR REPLACE INTO chunks(x, z, techpoints) VALUES(?, ?, ?);";
+        try (Connection conn = connect();
+             PreparedStatement statement = conn.prepareStatement(sql))
         {
-            String sql = "INSERT OR REPLACE INTO chunks(x, z, techpoints) VALUES(?, ?, ?);";
-            PreparedStatement statement = conn.prepareStatement(sql);
             statement.setInt(1, x);
             statement.setInt(2, z);
             statement.setInt(3, techpoints);
@@ -75,13 +73,14 @@ public class DatabaseModule
     {
         String sql = "SELECT x, z, techpoints FROM chunks WHERE techpoints > 200";
         HashMap<ChunkCoordinate, Integer> chunks = new HashMap<>();
-        try(Connection conn = connect())
-        {
+        try(Connection conn = connect();
             Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery(sql);
+            ResultSet rs = statement.executeQuery(sql))
+        {
             while(rs.next())
             {
-                chunks.put(new ChunkCoordinate(rs.getInt("x"), rs.getInt("z")), rs.getInt("techpoints"));
+                chunks.put(new ChunkCoordinate(rs.getInt("x"),
+                                               rs.getInt("z")), rs.getInt("techpoints"));
             }
         }
         catch (SQLException e)
