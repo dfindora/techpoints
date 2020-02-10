@@ -18,6 +18,15 @@ public class Techpoints extends JavaPlugin
     @Override
     public void onEnable()
     {
+        try
+        {
+            Class.forName("org.sqlite.JDBC");
+            getLogger().info("org.sqlite.JDBC loaded.");
+        }
+        catch (ClassNotFoundException e)
+        {
+            e.printStackTrace();
+        }
         getLogger().info("registering commands...");
         getServer().getPluginManager().registerEvents(new EventListener(this), this);
         getCommand(commands.techPoints).setExecutor(commands);
@@ -25,6 +34,8 @@ public class Techpoints extends JavaPlugin
         getCommand(commands.techLimit).setExecutor(commands);
         getCommand(commands.techConfig).setExecutor(commands);
         getCommand(commands.techWand).setExecutor(commands);
+        getCommand(commands.techChunk).setExecutor(commands);
+        getCommand(commands.techVersion).setExecutor(commands);
         getLogger().info("commands registered.");
         getLogger().info("loading configs...");
         loadConfiguration();

@@ -8,10 +8,10 @@ import com.goldensands.main.Techpoints;
 public class ModuleHandler
 {
     private Techpoints plugin;
-    private FileModule fileModule;
     private TechpointsModule techpointsModule;
     private WandModule wandModule;
     private DatabaseModule databaseModule;
+    private TechLimitModule techLimitModule;
 
     public ModuleHandler(Techpoints plugin)
     {
@@ -23,21 +23,16 @@ public class ModuleHandler
      */
     public void setup()
     {
-        fileModule = new FileModule(plugin);
-        fileModule.setup();
+        plugin.getLogger().info("file module loaded.");
+        techpointsModule = new TechpointsModule(plugin);
+        plugin.getLogger().info("techpoints module loaded.");
+        wandModule = new WandModule(plugin);
+        plugin.getLogger().info("wand module loaded.");
+        techLimitModule = new TechLimitModule(plugin);
+        plugin.getLogger().info("techlimit module loaded.");
         databaseModule = new DatabaseModule(plugin);
         databaseModule.setup();
-        techpointsModule = new TechpointsModule(plugin);
-        wandModule = new WandModule(plugin);
-    }
-
-    /**
-     *
-     * @return the file module
-     */
-    public FileModule getFileModule()
-    {
-        return fileModule;
+        plugin.getLogger().info("database module loaded.");
     }
 
     public DatabaseModule getDatabaseModule()
@@ -53,5 +48,10 @@ public class ModuleHandler
     public WandModule getWandModule()
     {
         return wandModule;
+    }
+
+    public TechLimitModule getTechLimitModule()
+    {
+        return techLimitModule;
     }
 }

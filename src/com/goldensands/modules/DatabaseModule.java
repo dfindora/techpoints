@@ -13,20 +13,29 @@ public class DatabaseModule
     public DatabaseModule(Techpoints plugin)
     {
         this.plugin = plugin;
-        dbFilename = plugin.getDataFolder() + "techlimit.db";
+        dbFilename = plugin.getDataFolder() + "/techlimit.db";
     }
 
     public void setup()
     {
         try (Connection conn = connect()) {
-            String sql = "CREATE TABLE IF NOT EXISTS chunks ("
-                         + "x integer  NOT NULL, "
-                         + "z integer NOT NULL, "
-                         + "techpoints integer NOT NULL,"
-                         + "PRIMARY KEY (x, z)"
-                         + ");";
-            Statement statement = conn.createStatement();
-            statement.execute(sql);
+            if(conn != null)
+            {
+                plugin.getLogger().info("Database connection successful.");
+                String sql = "CREATE TABLE IF NOT EXISTS chunks ("
+                             + "x integer  NOT NULL, "
+                             + "z integer NOT NULL, "
+                             + "techpoints integer NOT NULL,"
+                             + "PRIMARY KEY (x, z)"
+                             + ");";
+
+                Statement statement = conn.createStatement();
+                statement.execute(sql);
+            }
+            else
+            {
+                plugin.getLogger().warning("Database conection failed.");
+            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
