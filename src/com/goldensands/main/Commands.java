@@ -1,6 +1,7 @@
 package com.goldensands.main;
 
 import com.goldensands.config.BasicTechPointItem;
+import com.goldensands.modules.ChunkCoordinate;
 import com.goldensands.modules.TechChunk;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -12,8 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class Commands implements Listener, CommandExecutor
 {
@@ -92,6 +92,9 @@ public class Commands implements Listener, CommandExecutor
                             .techPoints((Player)sender);
                     plugin.getModuleHandler().getTechpointsModule()
                             .techPointsMessages(techChunk, (Player)sender, 1);
+                    plugin.getModuleHandler().getDatabaseModule().addChunk(techChunk.getChunk().getX(),
+                                                                           techChunk.getChunk().getZ(),
+                                                                           techChunk.getTechPoints());
                     return true;
                 }
                 else
@@ -163,7 +166,47 @@ public class Commands implements Listener, CommandExecutor
         {
             if (sender.hasPermission("techpoints.techlimit"))
             {
-                sender.sendMessage("This command hasn't been implemented yet.");
+                int page = 1;
+                ArrayList<Page> pages = new ArrayList<>();
+                if(args.length == 0)
+                {
+                    HashMap<ChunkCoordinate, Integer> chunks
+                            = plugin.getModuleHandler().getDatabaseModule().getChunksOverLimit();
+                    ArrayList<Map.Entry<ChunkCoordinate, Integer>> entries = new ArrayList<>(chunks.entrySet());
+                    //TODO: Implementation is not very modifiable.
+                    for(int i = 0; i < chunks.entrySet().size(); i += 5)
+                    {
+                        pages.add(new Page(entries.get(i), entries.get(i + 1),
+                                           entries.get(i+ 2), entries.get(i + 3),
+                                           entries.get(i + 4)));
+                    }
+                }
+                else if(args.length == 2
+                        && (args[0].equalsIgnoreCase("page") || args[0].equalsIgnoreCase("pg"))
+                        && (args[1].equalsIgnoreCase("next")))
+                {
+                    page++;
+                }
+                else if(args.length == 2
+                        && (args[0].equalsIgnoreCase("page") || args[0].equalsIgnoreCase("pg"))
+                        && (args[1].equalsIgnoreCase("previous")))
+                {
+                    page--;
+                }
+                else if(args.length == 2
+                        && (args[0].equalsIgnoreCase("page") || args[0].equalsIgnoreCase("pg"))
+                        && (args[1].matches("\\d*")))
+                {
+                    page = Integer.parseInt(args[1]);
+                }
+                sender.sendMessage("Showing page " + page + " of " + pages.size());
+                if(page <= pages.size() && page > 0)
+                {
+                    for (Map.Entry<ChunkCoordinate, Integer> entry : pages.get(page - 1).entries)
+                    {
+                        sender.sendMessage("chunk " + entry.getKey() + "has " + entry.getValue() + " techpoints.");
+                    }
+                }
                 return true;
             }
             else
@@ -181,6 +224,9 @@ public class Commands implements Listener, CommandExecutor
                         .techPoints((Player)sender);
                 plugin.getModuleHandler().getTechpointsModule()
                         .techPointsMessages(techChunk, (Player)sender, 2);
+                plugin.getModuleHandler().getDatabaseModule().addChunk(techChunk.getChunk().getX(),
+                                                                       techChunk.getChunk().getZ(),
+                                                                       techChunk.getTechPoints());
                 return true;
             }
             else
@@ -221,5 +267,16 @@ public class Commands implements Listener, CommandExecutor
         }
 
         return false;
+    }
+
+    private class Page
+    {
+        ArrayList<Map.Entry<ChunkCoordinate, Integer>> entries = new ArrayList<>();
+
+        @SafeVarargs
+        Page(Map.Entry<ChunkCoordinate, Integer>... entries)
+        {
+            this.entries.addAll(Arrays.asList(entries));
+        }
     }
 }

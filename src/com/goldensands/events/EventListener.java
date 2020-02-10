@@ -3,6 +3,7 @@ package com.goldensands.events;
 import com.goldensands.config.BasicTechPointItem;
 import com.goldensands.main.Techpoints;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,6 +30,8 @@ public class EventListener implements Listener
             //get the techpoint value in this chunk
             int totalTechPoints = plugin.getModuleHandler().getTechpointsModule()
                     .techPoints(event.getPlayer()).getTechPoints();
+            Chunk currentChunk = event.getPlayer().getLocation().getChunk();
+            plugin.getModuleHandler().getDatabaseModule().addChunk(currentChunk.getX(), currentChunk.getZ(), totalTechPoints);
             //If this chunk is currently over the techpoint limit and the placer does not have the permission to
             // bypass the limit, print out a warning message
             if (totalTechPoints > (int) plugin.getConfig().get("MaxTechPoints") && !event.getPlayer().hasPermission("techpoints.limit.bypass"))
@@ -37,7 +40,6 @@ public class EventListener implements Listener
                 event.getPlayer().sendMessage(ChatColor.RED + "This chunk has exceeded the tech point limit!");
                 event.getPlayer().sendMessage(ChatColor.RED + "The tech point limit is "
                                               + plugin.getConfig().get("MaxTechPoints") + ". This chunk is now at " + totalTechPoints + ".");
-                //logToFile("Chunk " + currentChunk.getX() + ", " + currentChunk.getZ() + " has " + totalTechPoints + " tech points");
             }
         }
     }

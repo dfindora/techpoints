@@ -11,6 +11,7 @@ public class ModuleHandler
     private FileModule fileModule;
     private TechpointsModule techpointsModule;
     private WandModule wandModule;
+    private DatabaseModule databaseModule;
 
     public ModuleHandler(Techpoints plugin)
     {
@@ -24,6 +25,8 @@ public class ModuleHandler
     {
         fileModule = new FileModule(plugin);
         fileModule.setup();
+        databaseModule = new DatabaseModule(plugin);
+        databaseModule.setup();
         techpointsModule = new TechpointsModule(plugin);
         wandModule = new WandModule(plugin);
     }
@@ -35,6 +38,11 @@ public class ModuleHandler
     public FileModule getFileModule()
     {
         return fileModule;
+    }
+
+    public DatabaseModule getDatabaseModule()
+    {
+        return databaseModule;
     }
 
     public TechpointsModule getTechpointsModule()
