@@ -1,4 +1,4 @@
-package com.goldensands.modules;
+package com.goldensands.util;
 
 import com.goldensands.config.BasicTechPointItem;
 import com.goldensands.config.MultiBlock;

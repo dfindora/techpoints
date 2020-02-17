@@ -1,11 +1,11 @@
-package com.goldensands.modules;
+package com.goldensands.util;
 
-public class ChunkCoordinate implements Comparable<ChunkCoordinate>
+public class Vector2d implements Comparable<Vector2d>
 {
     private final int x;
     private final int z;
 
-    public ChunkCoordinate(int x, int z)
+    public Vector2d(int x, int z)
     {
         this.x = x;
         this.z = z;
@@ -22,7 +22,7 @@ public class ChunkCoordinate implements Comparable<ChunkCoordinate>
     }
 
     @Override
-    public int compareTo(ChunkCoordinate o)
+    public int compareTo(Vector2d o)
     {
         return (this.x == o.x && this.z == o.z) ? 0 : 1;
     }

@@ -1,6 +1,7 @@
 package com.goldensands.modules;
 
 import com.goldensands.main.Techpoints;
+import com.goldensands.util.Vector2d;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -12,7 +13,7 @@ public class TechLimitModule
 {
     private Techpoints plugin;
     private HashMap<CommandSender, Integer> pageIndexes;
-    private HashMap<CommandSender,  ArrayList<ArrayList<Map.Entry<ChunkCoordinate, Integer>>>> queries;
+    private HashMap<CommandSender,  ArrayList<ArrayList<Map.Entry<Vector2d, Integer>>>> queries;
 
     public TechLimitModule(Techpoints plugin)
     {
@@ -31,10 +32,10 @@ public class TechLimitModule
         {
             pageIndexes.put(sender, 1);
         }
-        ArrayList<ArrayList<Map.Entry<ChunkCoordinate, Integer>>> pages = new ArrayList<>();
-        HashMap<ChunkCoordinate, Integer> chunks
+        ArrayList<ArrayList<Map.Entry<Vector2d, Integer>>> pages = new ArrayList<>();
+        HashMap<Vector2d, Integer> chunks
                 = plugin.getModuleHandler().getDatabaseModule().getChunksOverLimit();
-        ArrayList<Map.Entry<ChunkCoordinate, Integer>> entries = new ArrayList<>(chunks.entrySet());
+        ArrayList<Map.Entry<Vector2d, Integer>> entries = new ArrayList<>(chunks.entrySet());
         int pageEntryIndex = 0;
         if(chunks.size() > 0)
         {
@@ -94,7 +95,7 @@ public class TechLimitModule
         return pageIndexes.get(sender);
     }
 
-    public ArrayList<ArrayList<Map.Entry<ChunkCoordinate, Integer>>> getQuery(CommandSender sender)
+    public ArrayList<ArrayList<Map.Entry<Vector2d, Integer>>> getQuery(CommandSender sender)
     {
         return queries.get(sender);
     }

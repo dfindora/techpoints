@@ -1,12 +1,12 @@
-package com.goldensands.modules;
+package com.goldensands.util;
 
-public class Coordinate implements Comparable<Coordinate>
+public class Vector3d implements Comparable<Vector3d>
 {
     private final double x;
     private final double y;
     private final double z;
 
-    public Coordinate(double x, double y, double z)
+    public Vector3d(double x, double y, double z)
     {
         this.x = x;
         this.y = y;
@@ -29,9 +29,9 @@ public class Coordinate implements Comparable<Coordinate>
     }
 
     @Override
-    public int compareTo(Coordinate coordinate)
+    public int compareTo(Vector3d vector3d)
     {
-        return (this.x == coordinate.x && this.y == coordinate.y && this.z == coordinate.z) ? 0 : 1;
+        return (this.x == vector3d.x && this.y == vector3d.y && this.z == vector3d.z) ? 0 : 1;
     }
 
     @Override

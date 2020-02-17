@@ -1,8 +1,8 @@
 package com.goldensands.main;
 
 import com.goldensands.config.BasicTechPointItem;
-import com.goldensands.modules.ChunkCoordinate;
-import com.goldensands.modules.TechChunk;
+import com.goldensands.util.TechChunk;
+import com.goldensands.util.Vector2d;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -137,12 +137,12 @@ public class Commands implements Listener, CommandExecutor
                     plugin.getModuleHandler().getTechLimitModule().setPage(sender, Integer.parseInt(args[1]));
                 }
                 int pageIndex = plugin.getModuleHandler().getTechLimitModule().getPage(sender);
-                ArrayList<ArrayList<Map.Entry<ChunkCoordinate, Integer>>> query =
+                ArrayList<ArrayList<Map.Entry<Vector2d, Integer>>> query =
                         plugin.getModuleHandler().getTechLimitModule().getQuery(sender);
                 sender.sendMessage("Showing page " + pageIndex + "of " + query.size());
                 if (pageIndex <= query.size() && pageIndex > 0)
                 {
-                    for (Map.Entry<ChunkCoordinate, Integer> entry : query.get(pageIndex - 1))
+                    for (Map.Entry<Vector2d, Integer> entry : query.get(pageIndex - 1))
                     {
                         sender.sendMessage("chunk " + entry.getKey() + "has " + entry.getValue() + " techpoints.");
                     }

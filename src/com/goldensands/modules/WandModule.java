@@ -1,6 +1,8 @@
 package com.goldensands.modules;
 
 import com.goldensands.main.Techpoints;
+import com.goldensands.util.TechChunk;
+import com.goldensands.util.Vector3d;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -14,8 +16,8 @@ import java.util.UUID;
 public class WandModule
 {
     private Techpoints plugin;
-    HashMap<UUID, Coordinate> firstPositions;
-    HashMap<UUID, Coordinate> secondPositions;
+    HashMap<UUID, Vector3d> firstPositions;
+    HashMap<UUID, Vector3d> secondPositions;
 
     public WandModule(Techpoints plugin)
     {
@@ -26,27 +28,27 @@ public class WandModule
 
     public void pos(double x, double y, double z, UUID uuid, boolean isLeft)
     {
-        Coordinate coordinate = new Coordinate(x, y, z);
+        Vector3d vector3d = new Vector3d(x, y, z);
         if(isLeft)
         {
             if(firstPositions.containsKey(uuid))
             {
-                firstPositions.replace(uuid, coordinate);
+                firstPositions.replace(uuid, vector3d);
             }
             else
             {
-                firstPositions.put(uuid, coordinate);
+                firstPositions.put(uuid, vector3d);
             }
         }
         else
         {
             if(secondPositions.containsKey(uuid))
             {
-                secondPositions.replace(uuid, coordinate);
+                secondPositions.replace(uuid, vector3d);
             }
             else
             {
-                secondPositions.put(uuid, coordinate);
+                secondPositions.put(uuid, vector3d);
             }
         }
     }
@@ -54,8 +56,8 @@ public class WandModule
     public ArrayList<Chunk> getChunks(Player player, World world)
     {
         ArrayList<Chunk> chunks = new ArrayList<>();
-        Coordinate pos1 = firstPositions.getOrDefault(player.getUniqueId(), null);
-        Coordinate pos2 = secondPositions.getOrDefault(player.getUniqueId(), null);
+        Vector3d pos1 = firstPositions.getOrDefault(player.getUniqueId(), null);
+        Vector3d pos2 = secondPositions.getOrDefault(player.getUniqueId(), null);
         if(pos1 != null && pos2 != null)
         {
             if (pos1.getX() <= pos2.getX() && pos1.getZ() <= pos2.getZ())

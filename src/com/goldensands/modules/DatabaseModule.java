@@ -1,6 +1,7 @@
 package com.goldensands.modules;
 
 import com.goldensands.main.Techpoints;
+import com.goldensands.util.Vector2d;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -69,18 +70,18 @@ public class DatabaseModule
         }
     }
 
-    public HashMap<ChunkCoordinate, Integer> getChunksOverLimit()
+    public HashMap<Vector2d, Integer> getChunksOverLimit()
     {
         String sql = "SELECT x, z, techpoints FROM chunks WHERE techpoints > 200";
-        HashMap<ChunkCoordinate, Integer> chunks = new HashMap<>();
+        HashMap<Vector2d, Integer> chunks = new HashMap<>();
         try(Connection conn = connect();
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(sql))
         {
             while(rs.next())
             {
-                chunks.put(new ChunkCoordinate(rs.getInt("x"),
-                                               rs.getInt("z")), rs.getInt("techpoints"));
+                chunks.put(new Vector2d(rs.getInt("x"),
+                                        rs.getInt("z")), rs.getInt("techpoints"));
             }
         }
         catch (SQLException e)
