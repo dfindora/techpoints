@@ -18,9 +18,10 @@ public class DatabaseModule
     {
         this.plugin = plugin;
         dbFilename = plugin.getDataFolder() + "/techlimit.db";
+        setup();
     }
 
-    public void setup()
+    private void setup()
     {
         plugin.getLogger().info("downloading JDBC..");
         getJDBCLib();
@@ -44,8 +45,7 @@ public class DatabaseModule
         }
     }
 
-    @SuppressWarnings("ignored")
-    public void getJDBCLib()
+    private void getJDBCLib()
     {
         try
         {
@@ -86,7 +86,7 @@ public class DatabaseModule
     }
 
 
-    public Connection connect()
+    private Connection connect()
     {
         String url = "jdbc:sqlite:" + dbFilename;
         Connection conn = null;

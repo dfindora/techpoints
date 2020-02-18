@@ -8,6 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -39,7 +40,6 @@ public class EventListener implements Listener
             // bypass the limit, print out a warning message
             if (minTechPoints > (int) plugin.getConfig().get("MaxTechPoints") && !event.getPlayer().hasPermission("techpoints.limit.bypass"))
             {
-                //TODO: keep a log of the data in chunk files
                 event.getPlayer().sendMessage(ChatColor.RED + "This chunk has exceeded the tech point limit!");
                 event.getPlayer().sendMessage(ChatColor.RED + "The tech point limit is "
                                               + plugin.getConfig().get("MaxTechPoints") + ". This chunk is now at " + minTechPoints + ".");
@@ -68,6 +68,21 @@ public class EventListener implements Listener
                                                                event.getPlayer().getUniqueId(), false);
                 event.getPlayer().sendMessage("position 2 set at " + block.getX() + ", " + block.getY() + ", " + block.getZ() + ".");
             }
+        }
+    }
+
+    @EventHandler
+    public void onBreak(BlockBreakEvent event)
+    {
+        BasicTechPointItem techPointItem = plugin.getConfigManager().configMatch(event.getBlock(), null);
+        if(techPointItem != null)
+        {
+            int minTechPoints =
+                    plugin.getModuleHandler().getTechpointsModule().techPoints(event.getPlayer()).getMinTechPoints();
+            int maxTechPoints =
+                    plugin.getModuleHandler().getTechpointsModule().techPoints(event.getPlayer()).getMaxTechPoints();
+            Chunk chunk = event.getPlayer().getLocation().getChunk();
+            plugin.getModuleHandler().getDatabaseModule().addChunk(chunk.getX(), chunk.getZ(), minTechPoints, maxTechPoints);
         }
     }
 }

@@ -31,7 +31,6 @@ public class ModuleHandler
         techLimitModule = new TechLimitModule(plugin);
         plugin.getLogger().info("techlimit module loaded.");
         databaseModule = new DatabaseModule(plugin);
-        databaseModule.setup();
         plugin.getLogger().info("database module loaded.");
     }
 
