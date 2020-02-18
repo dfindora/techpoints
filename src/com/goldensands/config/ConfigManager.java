@@ -21,7 +21,7 @@ public class ConfigManager
 
     private File techPointsFile;
     private ArrayList<BasicTechPointItem> basicTechPointItems;
-    private ArrayList<UniqueTechPointItem> uniqueTechPointItems;
+    private ArrayList<VariedTechPointItem> variedTechPointItems;
     private ArrayList<MultiBlock> multiBlocks;
 
     public ConfigManager(Techpoints plugin)
@@ -156,7 +156,7 @@ public class ConfigManager
 
         //array initialization
         basicTechPointItems = new ArrayList<>();
-        uniqueTechPointItems = new ArrayList<>();
+        variedTechPointItems = new ArrayList<>();
         multiBlocks = new ArrayList<>();
         //load lists from config
         List<String> basicTechPointItemString = (List<String>) techPointsCfg.getList("BasicTechPointItems");
@@ -183,12 +183,17 @@ public class ConfigManager
             for (String uniqueTechPointItem : uniqueTechPointItemString)
             {
                 String[] split = uniqueTechPointItem.split(":");
-                UniqueTechPointItem utpi = (split[1].equals("*"))
-                                           ? new UniqueTechPointItem(Integer.parseInt(split[0]),
-                                                                     -1, Integer.parseInt(split[2]), split[3], split[4])
-                                           : new UniqueTechPointItem(Integer.parseInt(split[0]),
-                                                                     Integer.parseInt(split[1]), Integer.parseInt(split[2]), split[3], split[4]);
-                uniqueTechPointItems.add(utpi);
+                VariedTechPointItem utpi = (split[1].equals("*"))
+                                           ? new VariedTechPointItem(Integer.parseInt(split[0]),
+                                                                     -1, Integer.parseInt(split[2]),
+                                                                     Integer.parseInt(split[3]),
+                                                                     split[4], split[5])
+                                           : new VariedTechPointItem(Integer.parseInt(split[0]),
+                                                                     Integer.parseInt(split[1]),
+                                                                     Integer.parseInt(split[2]),
+                                                                     Integer.parseInt(split[3]),
+                                                                     split[4], split[5]);
+                variedTechPointItems.add(utpi);
             }
             //MultiBlocks
             for (String multiBlock : multiBlockString)
@@ -303,11 +308,11 @@ public class ConfigManager
             }
             if (!found)
             {
-                for (UniqueTechPointItem uniqueTechPointItem : uniqueTechPointItems)
+                for (VariedTechPointItem variedTechPointItem : variedTechPointItems)
                 {
-                    if (uniqueTechPointItem.compareTo(compareTo) == 0)
+                    if (variedTechPointItem.compareTo(compareTo) == 0)
                     {
-                        btpi = uniqueTechPointItem;
+                        btpi = variedTechPointItem;
                         found = true;
                         break;
                     }

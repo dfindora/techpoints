@@ -28,18 +28,21 @@ public class EventListener implements Listener
         if (techPointItem != null)
         {
             //get the techpoint value in this chunk
-            int totalTechPoints = plugin.getModuleHandler().getTechpointsModule()
-                    .techPoints(event.getPlayer()).getTechPoints();
+            int minTechPoints = plugin.getModuleHandler().getTechpointsModule()
+                    .techPoints(event.getPlayer()).getMinTechPoints();
+            int maxTechPoints = plugin.getModuleHandler().getTechpointsModule()
+                    .techPoints(event.getPlayer()).getMaxTechPoints();
             Chunk currentChunk = event.getPlayer().getLocation().getChunk();
-            plugin.getModuleHandler().getDatabaseModule().addChunk(currentChunk.getX(), currentChunk.getZ(), totalTechPoints);
+            plugin.getModuleHandler().getDatabaseModule().addChunk(currentChunk.getX(), currentChunk.getZ(),
+                                                                   minTechPoints, maxTechPoints);
             //If this chunk is currently over the techpoint limit and the placer does not have the permission to
             // bypass the limit, print out a warning message
-            if (totalTechPoints > (int) plugin.getConfig().get("MaxTechPoints") && !event.getPlayer().hasPermission("techpoints.limit.bypass"))
+            if (minTechPoints > (int) plugin.getConfig().get("MaxTechPoints") && !event.getPlayer().hasPermission("techpoints.limit.bypass"))
             {
                 //TODO: keep a log of the data in chunk files
                 event.getPlayer().sendMessage(ChatColor.RED + "This chunk has exceeded the tech point limit!");
                 event.getPlayer().sendMessage(ChatColor.RED + "The tech point limit is "
-                                              + plugin.getConfig().get("MaxTechPoints") + ". This chunk is now at " + totalTechPoints + ".");
+                                              + plugin.getConfig().get("MaxTechPoints") + ". This chunk is now at " + minTechPoints + ".");
             }
         }
     }

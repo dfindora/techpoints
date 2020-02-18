@@ -100,7 +100,8 @@ public class Commands implements Listener, CommandExecutor
                         .techPoints(chunk);
                 plugin.getModuleHandler().getDatabaseModule().addChunk(techChunk.getChunk().getX(),
                                                                        techChunk.getChunk().getZ(),
-                                                                       techChunk.getTechPoints());
+                                                                       techChunk.getMinTechPoints(),
+                                                                       techChunk.getMaxTechPoints());
                 return true;
             }
             else
@@ -177,7 +178,8 @@ public class Commands implements Listener, CommandExecutor
                             .techPointsMessages(techChunk, (Player) sender, 1);
                     plugin.getModuleHandler().getDatabaseModule().addChunk(techChunk.getChunk().getX(),
                                                                            techChunk.getChunk().getZ(),
-                                                                           techChunk.getTechPoints());
+                                                                           techChunk.getMinTechPoints(),
+                                                                           techChunk.getMaxTechPoints());
                     return true;
                 }
                 else
@@ -255,7 +257,8 @@ public class Commands implements Listener, CommandExecutor
                         .techPointsMessages(techChunk, (Player) sender, 2);
                 plugin.getModuleHandler().getDatabaseModule().addChunk(techChunk.getChunk().getX(),
                                                                        techChunk.getChunk().getZ(),
-                                                                       techChunk.getTechPoints());
+                                                                       techChunk.getMinTechPoints(),
+                                                                       techChunk.getMaxTechPoints());
                 return true;
             }
             else

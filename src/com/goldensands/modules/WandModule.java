@@ -166,16 +166,25 @@ public class WandModule
         sender.sendMessage("list of chunks: ");
         for(TechChunk techChunk : techChunks)
         {
-            if(techChunk.getTechPoints() > plugin.getConfig().getInt("MaxTechPoints"))
+            if(techChunk.getMinTechPoints() > plugin.getConfig().getInt("MaxTechPoints")
+               && techChunk.getMaxTechPoints() > plugin.getConfig().getInt("MaxTechPoints"))
             {
                 sender.sendMessage(ChatColor.RED + "Techpoints for chunk (" + techChunk.getChunk().getX() + ", "
-                                   + techChunk.getChunk().getZ() + "): " + techChunk.getTechPoints());
+                                   + techChunk.getChunk().getZ() + "): "
+                                   + techChunk.getMinTechPoints() + " to " + techChunk.getMaxTechPoints());
 
+            }
+            else if(techChunk.getMaxTechPoints() > plugin.getConfig().getInt("MaxTechPoints"))
+            {
+                sender.sendMessage(ChatColor.YELLOW + "Techpoints for chunk (" + techChunk.getChunk().getX() + ", "
+                                   + techChunk.getChunk().getZ() + "): "
+                                   + techChunk.getMinTechPoints() + " to " + techChunk.getMaxTechPoints());
             }
             else
             {
                 sender.sendMessage("Techpoints for chunk (" + techChunk.getChunk().getX() + ", "
-                                   + techChunk.getChunk().getZ() + "): " + techChunk.getTechPoints());
+                                   + techChunk.getChunk().getZ() + "): "
+                                   + techChunk.getMinTechPoints() + " to " + techChunk.getMaxTechPoints());
             }
         }
     }

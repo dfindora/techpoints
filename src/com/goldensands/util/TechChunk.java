@@ -12,23 +12,31 @@ import java.util.HashMap;
  */
 public class TechChunk
 {
-    private int techPoints;
+    private int minTechPoints;
+    private int maxTechPoints;
     private Chunk chunk;
     private HashMap<Block, BasicTechPointItem> techPointBlocks;
     private HashMap<MultiBlock, Integer> multiBlockCounts;
 
-    public TechChunk(int techPoints, Chunk chunk, HashMap<Block, BasicTechPointItem> techPointBlocks,
+    public TechChunk(int minTechPoints, int maxTechPoints, Chunk chunk,
+                     HashMap<Block, BasicTechPointItem> techPointBlocks,
                      HashMap<MultiBlock, Integer> multiBlockCounts)
     {
-        this.techPoints = techPoints;
+        this.minTechPoints = minTechPoints;
+        this.maxTechPoints = maxTechPoints;
         this.chunk = chunk;
         this.techPointBlocks = techPointBlocks;
         this.multiBlockCounts = multiBlockCounts;
     }
 
-    public int getTechPoints()
+    public int getMinTechPoints()
     {
-        return techPoints;
+        return minTechPoints;
+    }
+
+    public int getMaxTechPoints()
+    {
+        return maxTechPoints;
     }
 
     public Chunk getChunk()

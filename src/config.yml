@@ -12,22 +12,21 @@ Spawners:
     enabled: true
     id: 1821
     metadata: 0
-    techpoints: 100
+    minTechPoints: 100
+    maxTechPoints: 100
     size: 25
 
   StabilizedMobSpawner:
     enabled: true
     id: 1644
     metadata: 0
-    techpoints:
-      - 100
-      - 160
+    minTechPoints: 100
+    maxTechPoints: 160
 
   PoweredSpawner:
     enabled: true
     id: 1741
     metadata: 0
-    techpoints:
-      - 100
-      - 160
+    minTechPoints: 100
+    maxTechPoints: 160
 

@@ -2,7 +2,7 @@ package com.goldensands.modules;
 
 import com.goldensands.config.BasicTechPointItem;
 import com.goldensands.config.MultiBlock;
-import com.goldensands.config.UniqueTechPointItem;
+import com.goldensands.config.VariedTechPointItem;
 import com.goldensands.main.Techpoints;
 import com.goldensands.util.TechChunk;
 import org.bukkit.ChatColor;
@@ -47,7 +47,8 @@ public class TechpointsModule
     public TechChunk techPoints(Chunk currentChunk)
     {
         //Calculate tech points
-        int totalTechPoints = 0;
+        int minTotalTechPoints = 0;
+        int maxTotalTechPoints = 0;
         //The map of TechPointItems mapped to the block in which they are located. Used for /techlist printouts.
         HashMap<Block, BasicTechPointItem> techPointBlocks = new HashMap<>();
         //MultiBlocks with their total amounts. Used for MultiBlock recalculations.
@@ -73,24 +74,35 @@ public class TechpointsModule
                         else if(spawnerType == 2 && plugin.getConfig().getBoolean("Spawners.StabilizedMobSpawner"
                                                                                 + ".enabled"))
                         {
-                            totalTechPoints = (currentBlock.getBlockPower() == 0)
-                                              ? totalTechPoints + (Integer)plugin.getConfig()
-                                                    .getList("Spawners.StabilizedMobSpawner.techpoints").get(0)
-                                              : totalTechPoints;
+                            minTotalTechPoints = (currentBlock.getBlockPower() == 0)
+                                              ? minTotalTechPoints + plugin.getConfig()
+                                                    .getInt("Spawners.StabilizedMobSpawner.minTechPoints")
+                                              : minTotalTechPoints;
+                            maxTotalTechPoints = (currentBlock.getBlockPower() == 0)
+                                                 ? maxTotalTechPoints + plugin.getConfig()
+                                    .getInt("Spawners.StabilizedMobSpawner.maxTechPoints")
+                                                 : maxTotalTechPoints;
                         }
                         //block is a powered spawner
                         else if(spawnerType == 3 && plugin.getConfig().getBoolean("Spawners.PoweredSpawner.enabled"))
                         {
-                            totalTechPoints = (currentBlock.getBlockPower() > 0)
-                                              ? totalTechPoints + (Integer)plugin.getConfig()
-                                                    .getList("Spawners.PoweredSpawner.techpoints").get(0)
-                                              : totalTechPoints;
+                            minTotalTechPoints = (currentBlock.getBlockPower() > 0)
+                                              ? minTotalTechPoints + plugin.getConfig()
+                                                    .getInt("Spawners.PoweredSpawner.minTechPoints")
+                                              : minTotalTechPoints;
+                            maxTotalTechPoints = (currentBlock.getBlockPower() > 0)
+                                                 ? maxTotalTechPoints + plugin.getConfig()
+                                    .getInt("Spawners.PoweredSpawner.maxTechPoints")
+                                                 : maxTotalTechPoints;
                         }
                         BasicTechPointItem techPointItem = plugin.getConfigManager().configMatch(currentBlock, null);
                         if (techPointItem != null)
                         {
                             techPointBlocks.put(currentBlock, techPointItem);
-                            totalTechPoints += techPointItem.getTechPoints();
+                            minTotalTechPoints += techPointItem.getTechPoints();
+                            maxTotalTechPoints += (techPointItem instanceof VariedTechPointItem)
+                                                  ? ((VariedTechPointItem)techPointItem).getMaxTechPoints()
+                                                  : techPointItem.getTechPoints();
                         }
                         if (techPointItem instanceof MultiBlock)
                         {
@@ -110,17 +122,23 @@ public class TechpointsModule
             }
         }
         //add cursed earth techpoints
-        totalTechPoints += plugin.getConfig().getInt("Spawners.CursedEarth.techpoints") *
+        minTotalTechPoints += plugin.getConfig().getInt("Spawners.CursedEarth.minTechPoints") *
                 Math.ceil((double)cursedEarth.size() / plugin.getConfig().getInt("Spawners.CursedEarth.size"));
+        maxTotalTechPoints += plugin.getConfig().getInt("Spawners.CursedEarth.maxTechPoints") *
+                              Math.ceil((double)cursedEarth.size() / plugin.getConfig().getInt("Spawners.CursedEarth.size"));
         //multiblock recalculation
         for (Map.Entry<MultiBlock, Integer> multiBlockCount : multiBlockCounts.entrySet())
         {
-            totalTechPoints = totalTechPoints - multiBlockCount.getValue() * multiBlockCount.getKey().getTechPoints();
+            minTotalTechPoints =
+                    minTotalTechPoints - multiBlockCount.getValue() * multiBlockCount.getKey().getTechPoints();
+            maxTotalTechPoints =
+                    maxTotalTechPoints - multiBlockCount.getValue() * multiBlockCount.getKey().getTechPoints();
             double multiBlockTechPoints = multiBlockCount.getValue() * multiBlockCount.getKey().getTechPoints()
                                           / (multiBlockCount.getKey().getNumOfBlocks() + 0.0);
-            totalTechPoints += Math.floor(multiBlockTechPoints);
+            minTotalTechPoints += Math.floor(multiBlockTechPoints);
+            maxTotalTechPoints += Math.floor(multiBlockTechPoints);
         }
-        return new TechChunk(totalTechPoints, currentChunk, techPointBlocks, multiBlockCounts);
+        return new TechChunk(minTotalTechPoints, maxTotalTechPoints, currentChunk, techPointBlocks, multiBlockCounts);
     }
 
     //TODO: handle in the individual commands.
@@ -146,19 +164,19 @@ public class TechpointsModule
                                    "this chunk. Tech point values may not be accurate.");
             }
         }
-        //unique tech point item messages
+        //varied tech point item messages
         if (messageLevel >= 1)
         {
-            boolean sentUniqueItemMessage = false;
+            boolean sentVariedItemMessage = false;
             for (Map.Entry<Block, BasicTechPointItem> techPointBlock : techChunk.getTechPointBlocks().entrySet())
             {
                 Block currentBlock = techPointBlock.getKey();
                 BasicTechPointItem techPointItem = techPointBlock.getValue();
-                if (techPointBlock.getValue() instanceof UniqueTechPointItem)
+                if (techPointBlock.getValue() instanceof VariedTechPointItem)
                 {
-                    if (!sentUniqueItemMessage)
+                    if (!sentVariedItemMessage)
                     {
-                        sentUniqueItemMessage = true;
+                        sentVariedItemMessage = true;
                         sender.sendMessage(ChatColor.RED + "This chunk contains blocks with varying tech points.\n");
                         if (messageLevel >= 2)
                         {
@@ -170,9 +188,10 @@ public class TechpointsModule
                     {
                         sender.sendMessage(ChatColor.GREEN + techPointItem.getName() + ": " + ChatColor.YELLOW +
                                            +currentBlock.getX() + ", " + currentBlock.getY() + ", " + currentBlock.getZ()
-                                           + ChatColor.GRAY + "(" + techPointItem.getTechPoints() + " points)\n"
+                                           + ChatColor.GRAY + "(" + techPointItem.getTechPoints() + " to "
+                                           + ((VariedTechPointItem)techPointItem).getMaxTechPoints() + " points)\n"
                                            + ChatColor.RED + "\n\tReason: "
-                                           + ((UniqueTechPointItem) techPointItem).getReason());
+                                           + ((VariedTechPointItem) techPointItem).getReason());
                     }
                 }
             }
@@ -184,7 +203,7 @@ public class TechpointsModule
             {
                 BasicTechPointItem techPointItem = techPointBlock.getValue();
                 Block currentBlock = techPointBlock.getKey();
-                if (!(techPointItem instanceof UniqueTechPointItem))
+                if (!(techPointItem instanceof VariedTechPointItem))
                 {
                     sender.sendMessage(ChatColor.GREEN + techPointItem.getName() + ": " + ChatColor.YELLOW +
                                        +currentBlock.getX() + ", " + currentBlock.getY() + ", " + currentBlock.getZ()
@@ -195,16 +214,27 @@ public class TechpointsModule
         //techpoints messages
         if (messageLevel >= 1)
         {
-            if (techChunk.getTechPoints() <= (int) plugin.getConfig().get("MaxTechPoints"))
+            if (techChunk.getMinTechPoints() <= (int) plugin.getConfig().get("MaxTechPoints")
+                && techChunk.getMaxTechPoints() <= (int) plugin.getConfig().get("MaxTechPoints"))
             {
                 sender.sendMessage("Total tech points for chunk (" + techChunk.getChunk().getX() + ", "
                                    + techChunk.getChunk().getZ()
-                                   + "): " + techChunk.getTechPoints());
+                                   + "): " + techChunk.getMinTechPoints() + " to " + techChunk.getMaxTechPoints());
+            }
+            else if(techChunk.getMinTechPoints() <= (int) plugin.getConfig().get("MaxTechPoints"))
+            {
+                sender.sendMessage(ChatColor.YELLOW + "Total tech points for chunk (" + techChunk.getChunk().getX()
+                                   + ", " + techChunk.getChunk().getZ() + "): " + techChunk.getMinTechPoints()
+                                   + " to " + techChunk.getMaxTechPoints());
+                sender.sendMessage(ChatColor.YELLOW + "This chunk contains varied techpoint items that might put this"
+                                   + " chunk  over the techpoint limit of "
+                                   + plugin.getConfig().get("MaxTechPoints") + "!");
             }
             else
             {
                 sender.sendMessage(ChatColor.RED + "Total tech points for chunk (" + techChunk.getChunk().getX() + ", "
-                                   + techChunk.getChunk().getZ() + "): " + techChunk.getTechPoints());
+                                   + techChunk.getChunk().getZ() + "): "
+                                   + techChunk.getMinTechPoints() + " to " + techChunk.getMaxTechPoints());
                 sender.sendMessage(ChatColor.RED + "This chunk is over the techpoint limit of "
                                    + plugin.getConfig().get("MaxTechPoints") + "!");
             }
