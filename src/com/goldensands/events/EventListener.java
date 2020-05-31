@@ -5,6 +5,7 @@ import com.goldensands.main.Techpoints;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -29,21 +30,33 @@ public class EventListener implements Listener
         if (techPointItem != null)
         {
             //get the techpoint value in this chunk
-            int minTechPoints = plugin.getModuleHandler().getTechpointsModule()
-                    .techPoints(event.getPlayer()).getMinTechPoints();
-            int maxTechPoints = plugin.getModuleHandler().getTechpointsModule()
-                    .techPoints(event.getPlayer()).getMaxTechPoints();
-            Chunk currentChunk = event.getPlayer().getLocation().getChunk();
-            plugin.getModuleHandler().getDatabaseModule().addChunk(currentChunk.getX(), currentChunk.getZ(),
-                                                                   minTechPoints, maxTechPoints);
+            addToDatabase(event.getPlayer());
             //If this chunk is currently over the techpoint limit and the placer does not have the permission to
             // bypass the limit, print out a warning message
-            if (minTechPoints > (int) plugin.getConfig().get("MaxTechPoints") && !event.getPlayer().hasPermission("techpoints.limit.bypass"))
+            int minTechPoints = plugin.getModuleHandler().getTechpointsModule()
+                    .techPoints(event.getPlayer()).getMinTechPoints();
+            if (minTechPoints > (int) plugin.getConfig().get("MaxTechPoints") && !event.getPlayer()
+                    .hasPermission("techpoints.limit.bypass"))
             {
                 event.getPlayer().sendMessage(ChatColor.RED + "This chunk has exceeded the tech point limit!");
                 event.getPlayer().sendMessage(ChatColor.RED + "The tech point limit is "
-                                              + plugin.getConfig().get("MaxTechPoints") + ". This chunk is now at " + minTechPoints + ".");
+                                              + plugin.getConfig().get("MaxTechPoints") + ". This chunk is now at "
+                                              + minTechPoints + ".");
             }
+        }
+    }
+
+    private void addToDatabase(Player player)
+    {
+        if(!player.hasPermission("techpoints.limit.bypass"))
+        {
+            int minTechPoints = plugin.getModuleHandler().getTechpointsModule()
+                    .techPoints(player).getMinTechPoints();
+            int maxTechPoints = plugin.getModuleHandler().getTechpointsModule()
+                    .techPoints(player).getMaxTechPoints();
+            Chunk currentChunk = player.getLocation().getChunk();
+            plugin.getModuleHandler().getDatabaseModule().addChunk(currentChunk.getX(), currentChunk.getZ(),
+                                                                   minTechPoints, maxTechPoints);
         }
     }
 
@@ -77,12 +90,7 @@ public class EventListener implements Listener
         BasicTechPointItem techPointItem = plugin.getConfigManager().configMatch(event.getBlock(), null);
         if(techPointItem != null)
         {
-            int minTechPoints =
-                    plugin.getModuleHandler().getTechpointsModule().techPoints(event.getPlayer()).getMinTechPoints();
-            int maxTechPoints =
-                    plugin.getModuleHandler().getTechpointsModule().techPoints(event.getPlayer()).getMaxTechPoints();
-            Chunk chunk = event.getPlayer().getLocation().getChunk();
-            plugin.getModuleHandler().getDatabaseModule().addChunk(chunk.getX(), chunk.getZ(), minTechPoints, maxTechPoints);
+            addToDatabase(event.getPlayer());
         }
     }
 }
