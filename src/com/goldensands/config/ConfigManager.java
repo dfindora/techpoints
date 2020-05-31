@@ -104,10 +104,10 @@ public class ConfigManager
     /**
      * writes the defaults to the techpoints.yml file.
      * @param btpi - BasicTechPointItem defaults
-     * @param utpi - UniqueTechPointItem defaults
+     * @param vtpi - VariedTechPointItem defaults
      * @param mb - MultiBlock defaults
      */
-    private void copyDefaults(String[] btpi, String[] utpi, String[] mb)
+    private void copyDefaults(String[] btpi, String[] vtpi, String[] mb)
     {
         try
         {
@@ -118,8 +118,8 @@ public class ConfigManager
             {
                 bw.write("- " + str + "\n");
             }
-            bw.write("UniqueTechPointItems:\n");
-            for (String str : utpi)
+            bw.write("VariedTechPointItems:\n");
+            for (String str : vtpi)
             {
                 bw.write("- " + str + "\n");
             }
@@ -160,11 +160,11 @@ public class ConfigManager
         multiBlocks = new ArrayList<>();
         //load lists from config
         List<String> basicTechPointItemString = (List<String>) techPointsCfg.getList("BasicTechPointItems");
-        List<String> uniqueTechPointItemString = (List<String>) techPointsCfg.getList("UniqueTechPointItems");
+        List<String> variedTechPointItemString = (List<String>) techPointsCfg.getList("VariedTechPointItems");
         List<String> multiBlockString = (List<String>) techPointsCfg.getList("MultiBlocks");
         //verify config is properly formatted before loading. If there is any errors in the config, it can't be loaded.
         //TODO:instead of not loading the config at all, maybe it should just remove invalid config entries?
-        boolean isValid = verifyConfiguration(basicTechPointItemString, uniqueTechPointItemString, multiBlockString);
+        boolean isValid = verifyConfiguration(basicTechPointItemString, variedTechPointItemString, multiBlockString);
         //populate arrays
         if (isValid)
         {
@@ -179,10 +179,10 @@ public class ConfigManager
                                                                    Integer.parseInt(split[1]), Integer.parseInt(split[2]), split[3]);
                 basicTechPointItems.add(btpi);
             }
-            //UniqueTechPointItems
-            for (String uniqueTechPointItem : uniqueTechPointItemString)
+            //VariedTechPointItems
+            for (String variedTechPointItem : variedTechPointItemString)
             {
-                String[] split = uniqueTechPointItem.split(":");
+                String[] split = variedTechPointItem.split(":");
                 VariedTechPointItem utpi = (split[1].equals("*"))
                                            ? new VariedTechPointItem(Integer.parseInt(split[0]),
                                                                      -1, Integer.parseInt(split[2]),
@@ -216,11 +216,11 @@ public class ConfigManager
     /**
      * verifies that the whole techpoints.yml configuration file is properly formatted.
      * @param basicTechPointItems - list of BasicTechPointItem config strings.
-     * @param uniqueTechPointItems - list of UniqueTechPointItem config strings.
+     * @param variedTechPointItems - list of VariedTechPointItem config strings.
      * @param multiBlocks - list of MultiBlock config strings.
      * @return if the whole configuration is properly formatted, it returns true. Otherwise, it returns false.
      */
-    private boolean verifyConfiguration(List<String> basicTechPointItems, List<String> uniqueTechPointItems, List<String> multiBlocks)
+    private boolean verifyConfiguration(List<String> basicTechPointItems, List<String> variedTechPointItems, List<String> multiBlocks)
     {
         boolean isVerified = true;
         for (String configString : basicTechPointItems)
@@ -231,9 +231,9 @@ public class ConfigManager
                 plugin.getLogger().warning(configString + " is incorrectly formatted.");
             }
         }
-        for (String configString : uniqueTechPointItems)
+        for (String configString : variedTechPointItems)
         {
-            if (verifyConfigString(configString, "UniqueTechPointItem"))
+            if (verifyConfigString(configString, "VariedTechPointItem"))
             {
                 isVerified = false;
                 plugin.getLogger().warning(configString + " is incorrectly formatted.");
@@ -255,7 +255,7 @@ public class ConfigManager
      * @param configString - the string to verify.
      * @param type - the name of the type of TechPointItem it is. current valid types are:
      *             BasicTechPointItem
-     *             UniqueTechPointItem
+     *             VariedTechPointItem
      *             MultiBlock
      * @return if the string is valid, it returns true. Otherwise, it returns false.
      */
@@ -267,7 +267,7 @@ public class ConfigManager
             case "BasicTechPointItem":
                 isValid = configString.matches("\\d*:\\d*:\\d*:.*|\\d*:\\*:\\d*:.*");
                 break;
-            case "UniqueTechPointItem":
+            case "VariedTechPointItem":
                 isValid = configString.matches("\\d*:\\d*:\\d*:.*:.*|\\d*:\\*:\\d*:.*:.*");
                 break;
             case "MultiBlock":
