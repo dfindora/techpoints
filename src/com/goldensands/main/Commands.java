@@ -140,12 +140,12 @@ public class Commands implements Listener, CommandExecutor
                 int pageIndex = plugin.getModuleHandler().getTechLimitModule().getPage(sender);
                 ArrayList<ArrayList<Map.Entry<Vector2d, Integer>>> query =
                         plugin.getModuleHandler().getTechLimitModule().getQuery(sender);
-                sender.sendMessage("Showing page " + pageIndex + "of " + query.size());
+                sender.sendMessage("Showing page " + pageIndex + " of " + query.size());
                 if (pageIndex <= query.size() && pageIndex > 0)
                 {
                     for (Map.Entry<Vector2d, Integer> entry : query.get(pageIndex - 1))
                     {
-                        sender.sendMessage("chunk " + entry.getKey() + "has " + entry.getValue() + " techpoints.");
+                        sender.sendMessage("chunk " + entry.getKey() + " has " + entry.getValue() + " techpoints.");
                     }
                 }
                 return true;
