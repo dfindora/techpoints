@@ -12,19 +12,25 @@ import java.util.HashMap;
 public class DatabaseModule
 {
     String dbFilename;
+    File libDir;
     Techpoints plugin;
 
     public DatabaseModule(Techpoints plugin)
     {
         this.plugin = plugin;
         dbFilename = plugin.getDataFolder() + "/techlimit.db";
+        libDir = new File(plugin.getDataFolder() + File.separator + "lib" + File.separator);
         setup();
     }
 
     private void setup()
     {
-        plugin.getLogger().info("downloading JDBC..");
-        getJDBCLib();
+        if (libDir.exists() && libDir.isDirectory() && !new File(libDir.getPath() + File.separator
+                                                                + "sqlite-jdbc-3.30.1.jar").exists())
+        {
+            plugin.getLogger().info("downloading JDBC..");
+            getJDBCLib();
+        }
         String sql = "CREATE TABLE IF NOT EXISTS chunks ("
                      + "x integer  NOT NULL, "
                      + "z integer NOT NULL, "
@@ -50,7 +56,6 @@ public class DatabaseModule
         try
         {
             URL url = new URL("https://bitbucket.org/xerial/sqlite-jdbc/downloads/sqlite-jdbc-3.30.1.jar");
-            File libDir = new File(plugin.getDataFolder() + File.separator + "lib" + File.separator);
             if(!libDir.exists())
             {
                 boolean success = libDir.mkdir();
