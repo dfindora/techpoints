@@ -13,7 +13,7 @@ public class TechLimitModule
 {
     private Techpoints plugin;
     private HashMap<CommandSender, Integer> pageIndexes;
-    private HashMap<CommandSender,  ArrayList<ArrayList<Map.Entry<Vector2d, Integer>>>> queries;
+    private HashMap<CommandSender,  ArrayList<ArrayList<Map.Entry<Vector2d, Vector2d>>>> queries;
 
     public TechLimitModule(Techpoints plugin)
     {
@@ -32,10 +32,10 @@ public class TechLimitModule
         {
             pageIndexes.put(sender, 1);
         }
-        ArrayList<ArrayList<Map.Entry<Vector2d, Integer>>> pages = new ArrayList<>();
-        HashMap<Vector2d, Integer> chunks
+        ArrayList<ArrayList<Map.Entry<Vector2d, Vector2d>>> pages = new ArrayList<>();
+        HashMap<Vector2d, Vector2d> chunks
                 = plugin.getModuleHandler().getDatabaseModule().getChunksOverLimit();
-        ArrayList<Map.Entry<Vector2d, Integer>> entries = new ArrayList<>(chunks.entrySet());
+        ArrayList<Map.Entry<Vector2d, Vector2d>> entries = new ArrayList<>(chunks.entrySet());
         int pageEntryIndex = 0;
         if(chunks.size() > 0)
         {
@@ -82,7 +82,14 @@ public class TechLimitModule
     {
         if(pageIndexes.containsKey(sender))
         {
-            pageIndexes.replace(sender, page);
+            if(page > 0 && page <= queries.get(sender).size())
+            {
+                pageIndexes.replace(sender, page);
+            }
+            else
+            {
+                sender.sendMessage(ChatColor.RED + "Page does not exist.");
+            }
         }
         else
         {
@@ -95,7 +102,7 @@ public class TechLimitModule
         return pageIndexes.get(sender);
     }
 
-    public ArrayList<ArrayList<Map.Entry<Vector2d, Integer>>> getQuery(CommandSender sender)
+    public ArrayList<ArrayList<Map.Entry<Vector2d, Vector2d>>> getQuery(CommandSender sender)
     {
         return queries.get(sender);
     }

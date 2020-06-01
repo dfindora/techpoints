@@ -119,10 +119,10 @@ public class DatabaseModule
         }
     }
 
-    public HashMap<Vector2d, Integer> getChunksOverLimit()
+    public HashMap<Vector2d, Vector2d> getChunksOverLimit()
     {
-        String sql = "SELECT x, z, minTechPoints FROM chunks WHERE minTechPoints > 200";
-        HashMap<Vector2d, Integer> chunks = new HashMap<>();
+        String sql = "SELECT x, z, minTechPoints, maxTechPoints FROM chunks WHERE maxTechPoints > 200";
+        HashMap<Vector2d, Vector2d> chunks = new HashMap<>();
         try(Connection conn = connect();
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(sql))
@@ -130,7 +130,9 @@ public class DatabaseModule
             while(rs.next())
             {
                 chunks.put(new Vector2d(rs.getInt("x"),
-                                        rs.getInt("z")), rs.getInt("minTechPoints"));
+                                        rs.getInt("z")),
+                           new Vector2d(rs.getInt("minTechPoints"),
+                                        rs.getInt("maxTechPoints")));
             }
         }
         catch (SQLException e)

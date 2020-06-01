@@ -115,38 +115,66 @@ public class Commands implements Listener, CommandExecutor
         {
             if (sender.hasPermission("techpoints.techlimit"))
             {
+                //command /techlimit
                 if (args.length == 0)
                 {
                     plugin.getModuleHandler().getTechLimitModule().techLimit(sender);
                 }
+                //command /techlimit page next
                 if (args.length == 2
                     && (args[0].equalsIgnoreCase("page") || args[0].equalsIgnoreCase("pg"))
                     && (args[1].equalsIgnoreCase("next")))
                 {
                     plugin.getModuleHandler().getTechLimitModule().pageNext(sender);
                 }
+                //command /techlimit page previous
                 else if (args.length == 2
                          && (args[0].equalsIgnoreCase("page") || args[0].equalsIgnoreCase("pg"))
                          && (args[1].equalsIgnoreCase("previous")))
                 {
                     plugin.getModuleHandler().getTechLimitModule().pagePrevious(sender);
                 }
+                //command /techlimit page <number>
                 else if (args.length == 2
                          && (args[0].equalsIgnoreCase("page") || args[0].equalsIgnoreCase("pg"))
                          && (args[1].matches("\\d*")))
                 {
                     plugin.getModuleHandler().getTechLimitModule().setPage(sender, Integer.parseInt(args[1]));
                 }
+                //check page is not out of bounds
                 int pageIndex = plugin.getModuleHandler().getTechLimitModule().getPage(sender);
-                ArrayList<ArrayList<Map.Entry<Vector2d, Integer>>> query =
+                ArrayList<ArrayList<Map.Entry<Vector2d, Vector2d>>> query =
                         plugin.getModuleHandler().getTechLimitModule().getQuery(sender);
-                sender.sendMessage("Showing page " + pageIndex + " of " + query.size());
+                //check if page is not out of bounds
                 if (pageIndex <= query.size() && pageIndex > 0)
                 {
-                    for (Map.Entry<Vector2d, Integer> entry : query.get(pageIndex - 1))
+                    sender.sendMessage(ChatColor.AQUA + "Showing page " + pageIndex + " of " + query.size());
+
+                    for (Map.Entry<Vector2d, Vector2d> entry : query.get(pageIndex - 1))
                     {
-                        sender.sendMessage("chunk " + entry.getKey() + " has " + entry.getValue() + " techpoints.");
+                        if(entry.getValue().getX() > 200)
+                        {
+                            sender.sendMessage(ChatColor.AQUA + "chunk " + entry.getKey() + " has " + ChatColor.RED
+                                               + entry.getValue().getX() + " to " + entry.getValue().getZ() +
+                                               ChatColor.AQUA + " techpoints.");
+                        }
+                        else
+                        {
+                            sender.sendMessage(ChatColor.AQUA + "chunk " + entry.getKey() + " has " + ChatColor.YELLOW
+                                               + entry.getValue().getX() + " to " + entry.getValue().getZ() +
+                                               ChatColor.AQUA + " techpoints.");
+                        }
                     }
+                }
+                else if(pageIndex > query.size())
+                {
+                    sender.sendMessage(ChatColor.RED + "there is no next page.");
+                    plugin.getModuleHandler().getTechLimitModule().setPage(sender, query.size());
+                }
+                else
+                {
+                    sender.sendMessage(ChatColor.RED + "there is no previous page.");
+                    plugin.getModuleHandler().getTechLimitModule().setPage(sender, 1);
                 }
                 return true;
             }
