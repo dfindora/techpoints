@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -30,7 +31,7 @@ public class EventListener implements Listener
         if (techPointItem != null)
         {
             //get the techpoint value in this chunk
-            addToDatabase(event.getPlayer());
+            addToDatabase(techPointItem, event.getPlayer(), event);
             //If this chunk is currently over the techpoint limit and the placer does not have the permission to
             // bypass the limit, print out a warning message
             int minTechPoints = plugin.getModuleHandler().getTechpointsModule()
@@ -46,7 +47,7 @@ public class EventListener implements Listener
         }
     }
 
-    private void addToDatabase(Player player)
+    private void addToDatabase(BasicTechPointItem techPointItem, Player player, BlockEvent event)
     {
         if(!player.hasPermission("techpoints.limit.bypass"))
         {
@@ -55,8 +56,17 @@ public class EventListener implements Listener
             int maxTechPoints = plugin.getModuleHandler().getTechpointsModule()
                     .techPoints(player).getMaxTechPoints();
             Chunk currentChunk = player.getLocation().getChunk();
-            plugin.getModuleHandler().getDatabaseModule().addChunk(currentChunk.getX(), currentChunk.getZ(),
-                                                                   minTechPoints, maxTechPoints);
+            if(event instanceof BlockBreakEvent)
+            {
+                plugin.getModuleHandler().getDatabaseModule().addChunk(currentChunk.getX(), currentChunk.getZ(),
+                                                                       minTechPoints - techPointItem.getTechPoints(),
+                                                                       maxTechPoints - techPointItem.getTechPoints());
+            }
+            else
+            {
+                plugin.getModuleHandler().getDatabaseModule().addChunk(currentChunk.getX(), currentChunk.getZ(),
+                                                                       minTechPoints, maxTechPoints);
+            }
         }
     }
 
@@ -90,7 +100,7 @@ public class EventListener implements Listener
         BasicTechPointItem techPointItem = plugin.getConfigManager().configMatch(event.getBlock(), null);
         if(techPointItem != null)
         {
-            addToDatabase(event.getPlayer());
+            addToDatabase(techPointItem, event.getPlayer(), event);
         }
     }
 }
