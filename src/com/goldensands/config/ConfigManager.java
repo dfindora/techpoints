@@ -47,13 +47,13 @@ public class ConfigManager
                     "2:0:11:grass",
                     "5:*:11:Wood Planks"
             };
-            String[] utpi = new String[]{
-                    "7:0:3:Bedrock:This is a template. Please change this."
+            String[] vtpi = new String[]{
+                    "7:0:3:6:Bedrock:This is a template. Please change this."
             };
             String[] mb = new String[]{
                     "17:0:11:Oak Tree:6"
             };
-            copyDefaults(btpi, utpi, mb);
+            copyDefaults(btpi, vtpi, mb);
         }
         loadTechPoints();
     }
