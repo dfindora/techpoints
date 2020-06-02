@@ -64,7 +64,6 @@ public class WandModule
             {
                 for (double x = pos1.getX(); x <= pos2.getX(); x += 16)
                 {
-                    System.out.println("x = " + x);
                     for (double z = pos1.getZ(); z <= pos2.getZ(); z += 16)
                     {
                         Location location = new Location(world, x, pos1.getY(), z);
@@ -86,7 +85,6 @@ public class WandModule
             {
                 for (double x = pos1.getX(); x <= pos2.getX(); x += 16)
                 {
-                    System.out.println("x = " + x);
                     for (double z = pos1.getZ(); z >= pos2.getZ(); z -= 16)
                     {
                         Location location = new Location(world, x, pos1.getY(), z);
@@ -180,7 +178,7 @@ public class WandModule
                                    + techChunk.getChunk().getZ() + "): "
                                    + techChunk.getMinTechPoints() + " to " + techChunk.getMaxTechPoints());
             }
-            else
+            else if(techChunk.getMaxTechPoints() > 0)
             {
                 sender.sendMessage("Techpoints for chunk (" + techChunk.getChunk().getX() + ", "
                                    + techChunk.getChunk().getZ() + "): "

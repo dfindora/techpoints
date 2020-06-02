@@ -298,16 +298,16 @@ public class Commands implements Listener, CommandExecutor
         //techwand
         else if (command.getName().equalsIgnoreCase(techWand))
         {
+            ItemStack wand = new ItemStack(plugin.getConfig().getInt("techwand.id"), 1,
+                                           (short) plugin.getConfig().getInt("techwand.metadata"));
             if (sender.hasPermission("techpoints.techwand"))
             {
                 if (args.length > 0 && args[0].equalsIgnoreCase("count"))
                 {
                     plugin.getModuleHandler().getWandModule().regionTechpoints((Player) sender);
                 }
-                else
+                else if(!((Player) sender).getInventory().contains(wand.getType()))
                 {
-                    ItemStack wand = new ItemStack(plugin.getConfig().getInt("techwand.id"), 1,
-                                                   (short) plugin.getConfig().getInt("techwand.metadata"));
                     if (((Player) sender).getItemInHand().getType() == Material.AIR)
                     {
                         ((Player) sender).setItemInHand(wand);
