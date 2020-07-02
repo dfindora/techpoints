@@ -141,7 +141,6 @@ public class TechpointsModule
         return new TechChunk(minTotalTechPoints, maxTotalTechPoints, currentChunk, techPointBlocks, multiBlockCounts);
     }
 
-    //TODO: handle in the individual commands.
     /**
      * sends messages to the sender based on the specified message level.
      * @param techChunk - the output object from techPoints().
