@@ -1,7 +1,7 @@
-package com.goldensands.modules;
+package com.goldensands.bukkit.modules;
 
-import com.goldensands.main.Techpoints;
-import com.goldensands.util.Vector2d;
+import com.goldensands.bukkit.main.Techpoints;
+import com.goldensands.bukkit.util.Vector2d;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 

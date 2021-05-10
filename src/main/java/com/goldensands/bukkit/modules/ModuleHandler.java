@@ -1,6 +1,6 @@
-package com.goldensands.modules;
+package com.goldensands.bukkit.modules;
 
-import com.goldensands.main.Techpoints;
+import com.goldensands.bukkit.main.Techpoints;
 
 /**
  * The main hub that initializes all the modules.

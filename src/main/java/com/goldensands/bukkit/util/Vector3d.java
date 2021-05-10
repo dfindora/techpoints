@@ -1,4 +1,4 @@
-package com.goldensands.util;
+package com.goldensands.bukkit.util;
 
 public class Vector3d implements Comparable<Vector3d>
 {

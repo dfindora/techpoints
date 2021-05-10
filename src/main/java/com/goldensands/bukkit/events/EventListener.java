@@ -1,7 +1,7 @@
-package com.goldensands.events;
+package com.goldensands.bukkit.events;
 
 import com.goldensands.config.BasicTechPointItem;
-import com.goldensands.main.Techpoints;
+import com.goldensands.bukkit.main.Techpoints;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;

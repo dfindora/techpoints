@@ -1,8 +1,8 @@
 name: Techpoints
 version: 1.1.0
-author: cobra_0798
+author: cobra0798
 description: calculates the tech point values for each chunk the player is standing in.
-main: com.goldensands.main.Techpoints
+main: com.goldensands.bukkit.main.Techpoints
 
 commands:
     techpoints:

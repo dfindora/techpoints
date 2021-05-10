@@ -1,4 +1,4 @@
-package com.goldensands.util;
+package com.goldensands.bukkit.util;
 
 public class Vector2d implements Comparable<Vector2d>
 {

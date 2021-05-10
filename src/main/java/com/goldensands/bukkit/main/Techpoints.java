@@ -1,15 +1,15 @@
-package com.goldensands.main;
+package com.goldensands.bukkit.main;
 
-import com.goldensands.config.ConfigManager;
-import com.goldensands.events.EventListener;
-import com.goldensands.modules.ModuleHandler;
+import com.goldensands.config.SpigotConfigManager;
+import com.goldensands.bukkit.events.EventListener;
+import com.goldensands.bukkit.modules.ModuleHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Techpoints extends JavaPlugin
 {
     //ConfigManager for techpoints.yml.
-    private ConfigManager configManager;
+    private SpigotConfigManager configManager;
     //Main command handler.
     private Commands commands = new Commands(this);
     //Module handler - used to process most things
@@ -52,7 +52,7 @@ public class Techpoints extends JavaPlugin
         int techPointMax = 200;
         getConfig().addDefault("MaxTechPoints", techPointMax);
         getConfig().options().copyDefaults(true);
-        configManager = new ConfigManager(this);
+        configManager = new SpigotConfigManager(this);
         configManager.setup();
         moduleHandler = new ModuleHandler(this);
         moduleHandler.setup();
@@ -63,7 +63,7 @@ public class Techpoints extends JavaPlugin
      *
      * @return the techpoints.yml ConfigManager.
      */
-    public ConfigManager getConfigManager()
+    public SpigotConfigManager getConfigManager()
     {
         return configManager;
     }

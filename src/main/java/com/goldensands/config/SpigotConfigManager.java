@@ -1,6 +1,6 @@
 package com.goldensands.config;
 
-import com.goldensands.main.Techpoints;
+import com.goldensands.bukkit.main.Techpoints;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
@@ -15,18 +15,23 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConfigManager
+public class SpigotConfigManager
 {
-    private Techpoints plugin;
+    private Techpoints spigotPlugin;
 
     private File techPointsFile;
     private ArrayList<BasicTechPointItem> basicTechPointItems;
     private ArrayList<VariedTechPointItem> variedTechPointItems;
     private ArrayList<MultiBlock> multiBlocks;
 
-    public ConfigManager(Techpoints plugin)
+    public SpigotConfigManager(Techpoints plugin)
     {
-        this.plugin = plugin;
+        this.spigotPlugin = plugin;
+    }
+
+    public SpigotConfigManager(File techPointsFile)
+    {
+        this.techPointsFile = techPointsFile;
     }
 
     /**
@@ -36,7 +41,7 @@ public class ConfigManager
     {
         //file check
         directoryCheck();
-        techPointsFile = new File(plugin.getDataFolder(), "techpoints.yml");
+        techPointsFile = new File(spigotPlugin.getDataFolder(), "techpoints.yml");
         boolean isFileCreated = fileCheck(techPointsFile);
 
         //defaults creation
@@ -63,9 +68,9 @@ public class ConfigManager
      */
     private void directoryCheck()
     {
-        if (!plugin.getDataFolder().exists())
+        if (!spigotPlugin.getDataFolder().exists())
         {
-            boolean isCreated = plugin.getDataFolder().mkdir();
+            boolean isCreated = spigotPlugin.getDataFolder().mkdir();
             if (isCreated)
             {
                 Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN
@@ -143,7 +148,10 @@ public class ConfigManager
     public void reloadTechPoints()
     {
         loadTechPoints();
-        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "techpoints.yml reloaded.");
+        if (spigotPlugin != null)
+        {
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "techpoints.yml reloaded.");
+        }
     }
 
     /**
@@ -209,7 +217,10 @@ public class ConfigManager
         }
         else
         {
-            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.RED + "Unable to load config.");
+            if (spigotPlugin != null)
+            {
+                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.RED + "Unable to load config.");
+            }
         }
     }
 
@@ -228,7 +239,11 @@ public class ConfigManager
             if (verifyConfigString(configString, "BasicTechPointItem"))
             {
                 isVerified = false;
-                plugin.getLogger().warning(configString + " is incorrectly formatted.");
+
+                if (spigotPlugin != null)
+                {
+                    spigotPlugin.getLogger().warning(configString + " is incorrectly formatted.");
+                }
             }
         }
         for (String configString : variedTechPointItems)
@@ -236,7 +251,10 @@ public class ConfigManager
             if (verifyConfigString(configString, "VariedTechPointItem"))
             {
                 isVerified = false;
-                plugin.getLogger().warning(configString + " is incorrectly formatted.");
+                if (spigotPlugin != null)
+                {
+                    spigotPlugin.getLogger().warning(configString + " is incorrectly formatted.");
+                }
             }
         }
         for (String configString : multiBlocks)
@@ -244,7 +262,10 @@ public class ConfigManager
             if (verifyConfigString(configString, "MultiBlock"))
             {
                 isVerified = false;
-                plugin.getLogger().warning(configString + " is incorrectly formatted.");
+                if (spigotPlugin != null)
+                {
+                    spigotPlugin.getLogger().warning(configString + " is incorrectly formatted.");
+                }
             }
         }
         return isVerified;
