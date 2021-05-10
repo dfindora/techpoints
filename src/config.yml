@@ -1,0 +1,32 @@
+MaxTechPoints: 200
+#items in this list will not be registered when doing /techpoints waila. air(id 0) is disabled by default.
+WailaBlacklist:
+  - 1296
+techwand:
+  id: 4894
+  metadata: 3
+
+Spawners:
+  #any cursed earth from 1 to <size> will count as one techpoint value.
+  CursedEarth:
+    enabled: true
+    id: 1821
+    metadata: 0
+    minTechPoints: 100
+    maxTechPoints: 100
+    size: 25
+
+  StabilizedMobSpawner:
+    enabled: true
+    id: 1644
+    metadata: 0
+    minTechPoints: 100
+    maxTechPoints: 160
+
+  PoweredSpawner:
+    enabled: true
+    id: 1741
+    metadata: 0
+    minTechPoints: 100
+    maxTechPoints: 160
+
