@@ -1,0 +1,7 @@
+BasicTechPointItems:
+- GRASS:0:11:grass
+- WOOD:*:11:Wood Planks
+VariedTechPointItems:
+- BEDROCK:0:3:6:Bedrock:This is a template. Please change this.
+MultiBlocks:
+- LOG:0:11:Oak Tree:6

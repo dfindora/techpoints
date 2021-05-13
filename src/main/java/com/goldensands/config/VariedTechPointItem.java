@@ -2,10 +2,10 @@ package com.goldensands.config;
 
 public class VariedTechPointItem extends BasicTechPointItem
 {
-    private String reason;
-    private int maxTechPoints;
+    private final String reason;
+    private final int maxTechPoints;
 
-    VariedTechPointItem(int id, int data, int minTechPoints, int maxTechPoints, String name, String reason)
+    VariedTechPointItem(String id, int data, int minTechPoints, int maxTechPoints, String name, String reason)
     {
         super(id, data, minTechPoints, name);
         this.reason = reason;

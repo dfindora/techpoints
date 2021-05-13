@@ -11,9 +11,9 @@ import java.util.Map;
 
 public class TechLimitModule
 {
-    private Techpoints plugin;
-    private HashMap<CommandSender, Integer> pageIndexes;
-    private HashMap<CommandSender,  ArrayList<ArrayList<Map.Entry<Vector2d, Vector2d>>>> queries;
+    private final Techpoints plugin;
+    private final HashMap<CommandSender, Integer> pageIndexes;
+    private final HashMap<CommandSender,  ArrayList<ArrayList<Map.Entry<Vector2d, Vector2d>>>> queries;
 
     public TechLimitModule(Techpoints plugin)
     {

@@ -3,21 +3,20 @@ package com.goldensands.config;
 import com.goldensands.bukkit.main.Techpoints;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class SpigotConfigManager
 {
-    private Techpoints spigotPlugin;
+    private final Techpoints spigotPlugin;
 
     private File techPointsFile;
     private ArrayList<BasicTechPointItem> basicTechPointItems;
@@ -29,11 +28,6 @@ public class SpigotConfigManager
         this.spigotPlugin = plugin;
     }
 
-    public SpigotConfigManager(File techPointsFile)
-    {
-        this.techPointsFile = techPointsFile;
-    }
-
     /**
      * techpoints.yml initialization
      */
@@ -41,25 +35,9 @@ public class SpigotConfigManager
     {
         //file check
         directoryCheck();
-        techPointsFile = new File(spigotPlugin.getDataFolder(), "techpoints.yml");
-        boolean isFileCreated = fileCheck(techPointsFile);
-
         //defaults creation
-        //TODO: hard-coded defaults. move to a seperate default config file.
-        if (isFileCreated)
-        {
-            String[] btpi = new String[]{
-                    "2:0:11:grass",
-                    "5:*:11:Wood Planks"
-            };
-            String[] vtpi = new String[]{
-                    "7:0:3:6:Bedrock:This is a template. Please change this."
-            };
-            String[] mb = new String[]{
-                    "17:0:11:Oak Tree:6"
-            };
-            copyDefaults(btpi, vtpi, mb);
-        }
+        spigotPlugin.saveResource("techpoints.yml", false);
+        techPointsFile = new File(spigotPlugin.getDataFolder(), "techpoints.yml");
         loadTechPoints();
     }
 
@@ -76,69 +54,6 @@ public class SpigotConfigManager
                 Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN
                                                                   + "TechPoints directory has been created.");
             }
-        }
-    }
-
-    /**
-     * verifies if the specified config file is created. If it is not, it is created.
-     * @param file - config file to check
-     * @return if it is created, true. Otherwise, false.
-     */
-    private boolean fileCheck(File file)
-    {
-        boolean isFileCreated = false;
-        if (!file.exists())
-        {
-            try
-            {
-                isFileCreated = file.createNewFile();
-                if (isFileCreated)
-                {
-                    Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN
-                                                                      + "techpoints.yml has been created.");
-                }
-            }
-            catch (IOException e)
-            {
-                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.RED + "unable to create techpoints.yml");
-            }
-        }
-        return isFileCreated;
-    }
-
-    /**
-     * writes the defaults to the techpoints.yml file.
-     * @param btpi - BasicTechPointItem defaults
-     * @param vtpi - VariedTechPointItem defaults
-     * @param mb - MultiBlock defaults
-     */
-    private void copyDefaults(String[] btpi, String[] vtpi, String[] mb)
-    {
-        try
-        {
-            FileWriter fw = new FileWriter(techPointsFile);
-            BufferedWriter bw = new BufferedWriter(fw);
-            bw.write("BasicTechPointItems:\n");
-            for (String str : btpi)
-            {
-                bw.write("- " + str + "\n");
-            }
-            bw.write("VariedTechPointItems:\n");
-            for (String str : vtpi)
-            {
-                bw.write("- " + str + "\n");
-            }
-            bw.write("MultiBlocks:\n");
-            for (String str : mb)
-            {
-                bw.write("- " + str + "\n");
-            }
-            bw.close();
-            fw.close();
-        }
-        catch (IOException e)
-        {
-            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.RED + "could not save file.");
         }
     }
 
@@ -177,26 +92,28 @@ public class SpigotConfigManager
         if (isValid)
         {
             //BasicTechPointItems
+            assert basicTechPointItemString != null;
             for (String basicTechPointItem : basicTechPointItemString)
             {
                 String[] split = basicTechPointItem.split(":");
                 BasicTechPointItem btpi = (split[1].equals("*"))
-                                          ? new BasicTechPointItem(Integer.parseInt(split[0]),
-                                                                   -1, Integer.parseInt(split[2]), split[3])
-                                          : new BasicTechPointItem(Integer.parseInt(split[0]),
-                                                                   Integer.parseInt(split[1]), Integer.parseInt(split[2]), split[3]);
+                                          ? new BasicTechPointItem(split[0], -1,
+                                            Integer.parseInt(split[2]), split[3])
+                                          : new BasicTechPointItem(split[0], Integer.parseInt(split[1]),
+                                            Integer.parseInt(split[2]), split[3]);
                 basicTechPointItems.add(btpi);
             }
             //VariedTechPointItems
+            assert variedTechPointItemString != null;
             for (String variedTechPointItem : variedTechPointItemString)
             {
                 String[] split = variedTechPointItem.split(":");
                 VariedTechPointItem utpi = (split[1].equals("*"))
-                                           ? new VariedTechPointItem(Integer.parseInt(split[0]),
+                                           ? new VariedTechPointItem(split[0],
                                                                      -1, Integer.parseInt(split[2]),
                                                                      Integer.parseInt(split[3]),
                                                                      split[4], split[5])
-                                           : new VariedTechPointItem(Integer.parseInt(split[0]),
+                                           : new VariedTechPointItem(split[0],
                                                                      Integer.parseInt(split[1]),
                                                                      Integer.parseInt(split[2]),
                                                                      Integer.parseInt(split[3]),
@@ -204,14 +121,15 @@ public class SpigotConfigManager
                 variedTechPointItems.add(utpi);
             }
             //MultiBlocks
+            assert multiBlockString != null;
             for (String multiBlock : multiBlockString)
             {
                 String[] split = multiBlock.split(":");
                 MultiBlock mb = (split[1].equals("*"))
-                                ? new MultiBlock(Integer.parseInt(split[0]),
-                                                 -1, Integer.parseInt(split[2]), Integer.parseInt(split[4]), split[3])
-                                : new MultiBlock(Integer.parseInt(split[0]),
-                                                 Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[4]), split[3]);
+                                ? new MultiBlock(split[0], -1, Integer.parseInt(split[2]),
+                                Integer.parseInt(split[4]), split[3])
+                                : new MultiBlock(split[0], Integer.parseInt(split[1]), Integer.parseInt(split[2]),
+                                Integer.parseInt(split[4]), split[3]);
                 multiBlocks.add(mb);
             }
         }
@@ -234,39 +152,54 @@ public class SpigotConfigManager
     private boolean verifyConfiguration(List<String> basicTechPointItems, List<String> variedTechPointItems, List<String> multiBlocks)
     {
         boolean isVerified = true;
-        for (String configString : basicTechPointItems)
+        Logger logger = spigotPlugin.getLogger();
+        if (basicTechPointItems != null)
         {
-            if (verifyConfigString(configString, "BasicTechPointItem"))
+            for (String configString : basicTechPointItems)
             {
-                isVerified = false;
-
-                if (spigotPlugin != null)
+                if (verifyConfigString(configString, "BasicTechPointItem"))
                 {
-                    spigotPlugin.getLogger().warning(configString + " is incorrectly formatted.");
+                    isVerified = false;
+                    logger.warning(configString + " is incorrectly formatted.");
                 }
             }
         }
-        for (String configString : variedTechPointItems)
+        else
         {
-            if (verifyConfigString(configString, "VariedTechPointItem"))
+            logger.warning("Config missing BasicTechPointItems category.");
+            isVerified = false;
+        }
+        if (variedTechPointItems != null)
+        {
+            for (String configString : variedTechPointItems)
             {
-                isVerified = false;
-                if (spigotPlugin != null)
+                if (verifyConfigString(configString, "VariedTechPointItem"))
                 {
-                    spigotPlugin.getLogger().warning(configString + " is incorrectly formatted.");
+                    isVerified = false;
+                    logger.warning(configString + " is incorrectly formatted.");
                 }
             }
         }
-        for (String configString : multiBlocks)
+        else
         {
-            if (verifyConfigString(configString, "MultiBlock"))
+            spigotPlugin.getLogger().warning("Config missing VariedTechPointItems category.");
+            isVerified = false;
+        }
+        if (multiBlocks != null)
+        {
+            for (String configString : multiBlocks)
             {
-                isVerified = false;
-                if (spigotPlugin != null)
+                if (verifyConfigString(configString, "MultiBlock"))
                 {
-                    spigotPlugin.getLogger().warning(configString + " is incorrectly formatted.");
+                    isVerified = false;
+                    logger.warning(configString + " is incorrectly formatted.");
                 }
             }
+        }
+        else
+        {
+            spigotPlugin.getLogger().warning("Config missing MultiBlocks category.");
+            isVerified = false;
         }
         return isVerified;
     }
@@ -286,13 +219,13 @@ public class SpigotConfigManager
         switch (type)
         {
             case "BasicTechPointItem":
-                isValid = configString.matches("\\d*:\\d*:\\d*:.*|\\d*:\\*:\\d*:.*");
+                isValid = configString.matches("\\w*:\\d*:\\d*:[^:]*|\\w*:\\*:\\d*:[^:]*");
                 break;
             case "VariedTechPointItem":
-                isValid = configString.matches("\\d*:\\d*:\\d*:.*:.*|\\d*:\\*:\\d*:.*:.*");
+                isValid = configString.matches("\\w*:\\d*:\\d*:.*:\\D.*|\\w*:\\*:\\d*:.*:\\D.*");
                 break;
             case "MultiBlock":
-                isValid = configString.matches("\\d*:\\d*:\\d*:.*:\\d*|\\d*:\\*:\\d*:.*:\\d*");
+                isValid = configString.matches("\\w*:\\d*:\\d*:.*:\\d*|\\w*:\\*:\\d*:.*:\\d*");
                 break;
             default:
                 break;
@@ -309,20 +242,21 @@ public class SpigotConfigManager
     @SuppressWarnings({"deprecation"})
     public BasicTechPointItem configMatch(Block block, ItemStack hotbar)
     {
-        BasicTechPointItem btpi = null;
+        BasicTechPointItem techPointItem = null;
         BasicTechPointItem compareTo = (block != null)
-                                       ? new BasicTechPointItem(block.getTypeId(), block.getData(), 0,
+                                       ? new BasicTechPointItem(block.getType().name(), block.getData(), 0,
                                                                 block.getType().name())
-                                       : new BasicTechPointItem(hotbar.getTypeId(), hotbar.getDurability(), 0,
+                                       : new BasicTechPointItem(hotbar.getType().name(), hotbar.getDurability(), 0,
                                                                 hotbar.getType().name());
         boolean found = false;
-        if ((block != null && block.getTypeId() != 0) || (hotbar != null && hotbar.getTypeId() != 0))
+        if ((block != null && block.getType() != Material.AIR)
+                || (hotbar != null && hotbar.getType() != Material.AIR))
         {
             for (BasicTechPointItem basicTechPointItem : basicTechPointItems)
             {
                 if (basicTechPointItem.compareTo(compareTo) == 0)
                 {
-                    btpi = basicTechPointItem;
+                    techPointItem = basicTechPointItem;
                     found = true;
                     break;
                 }
@@ -333,7 +267,7 @@ public class SpigotConfigManager
                 {
                     if (variedTechPointItem.compareTo(compareTo) == 0)
                     {
-                        btpi = variedTechPointItem;
+                        techPointItem = variedTechPointItem;
                         found = true;
                         break;
                     }
@@ -346,12 +280,12 @@ public class SpigotConfigManager
                 {
                     if (multiBlock.compareTo(compareTo) == 0)
                     {
-                        btpi = multiBlock;
+                        techPointItem = multiBlock;
                         break;
                     }
                 }
             }
         }
-        return btpi;
+        return techPointItem;
     }
 }

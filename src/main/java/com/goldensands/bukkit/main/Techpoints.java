@@ -11,7 +11,7 @@ public class Techpoints extends JavaPlugin
     //ConfigManager for techpoints.yml.
     private SpigotConfigManager configManager;
     //Main command handler.
-    private Commands commands = new Commands(this);
+    private final Commands commands = new Commands(this);
     //Module handler - used to process most things
     private ModuleHandler moduleHandler;
 
@@ -36,6 +36,8 @@ public class Techpoints extends JavaPlugin
         getCommand(commands.techWand).setExecutor(commands);
         getCommand(commands.techChunk).setExecutor(commands);
         getCommand(commands.techVersion).setExecutor(commands);
+        getCommand(commands.techWaila).setExecutor(commands);
+        getCommand(commands.techHotbar).setExecutor(commands);
         getLogger().info("commands registered.");
         getLogger().info("loading configs...");
         loadConfiguration();
@@ -49,9 +51,7 @@ public class Techpoints extends JavaPlugin
 
     private void loadConfiguration()
     {
-        int techPointMax = 200;
-        getConfig().addDefault("MaxTechPoints", techPointMax);
-        getConfig().options().copyDefaults(true);
+        saveDefaultConfig();
         configManager = new SpigotConfigManager(this);
         configManager.setup();
         moduleHandler = new ModuleHandler(this);
@@ -66,15 +66,6 @@ public class Techpoints extends JavaPlugin
     public SpigotConfigManager getConfigManager()
     {
         return configManager;
-    }
-
-    /**
-     *
-     * @return the main Command module.
-     */
-    public Commands getCommands()
-    {
-        return commands;
     }
 
     public ModuleHandler getModuleHandler()

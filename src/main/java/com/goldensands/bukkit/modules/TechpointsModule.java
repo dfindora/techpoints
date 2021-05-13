@@ -14,13 +14,14 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * This module handles the techpoint calculations.
  */
 public class TechpointsModule
 {
-    private Techpoints plugin;
+    private final Techpoints plugin;
     TechpointsModule(Techpoints plugin)
     {
         this.plugin = plugin;
@@ -152,6 +153,7 @@ public class TechpointsModule
      */
     public void techPointsMessages(TechChunk techChunk, Player sender, int messageLevel)
     {
+        Logger logger = plugin.getLogger();
         //MultiBlock crossing chunks notification
         for(Map.Entry<MultiBlock, Integer> multiBlockCount : techChunk.getMultiBlockCounts().entrySet())
         {
@@ -248,7 +250,7 @@ public class TechpointsModule
     private int spawnerCheck(Block block)
     {
         int type = 0;
-        String blockID = block.getTypeId() + ":" + block.getData();
+        String blockID = block.getType() + ":" + block.getData();
         String cursedEarth = plugin.getConfig().getString("Spawners.CursedEarth.id") + ":"
                               + plugin.getConfig().getString("Spawners.CursedEarth.metadata");
         String stabilized = plugin.getConfig().getString("Spawners.StabilizedMobSpawner.id") + ":"

@@ -14,14 +14,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import javax.annotation.Nonnull;
+import java.util.*;
 
 public class Commands implements Listener, CommandExecutor
 {
-    private Techpoints plugin;
+    private final Techpoints plugin;
     //TODO:Should these command names be hard-coded?
     String techPoints = "techpoints";
     String techList = "techlist";
@@ -29,7 +27,9 @@ public class Commands implements Listener, CommandExecutor
     String techConfig = "techconfig";
     String techWand = "techwand";
     String techChunk = "techchunk";
-    String techVersion = "techVersion";
+    String techVersion = "techversion";
+    String techWaila = "techwaila";
+    String techHotbar = "techhotbar";
 
     Commands(Techpoints plugin)
     {
@@ -47,21 +47,27 @@ public class Commands implements Listener, CommandExecutor
      */
     @Override
     @SuppressWarnings({"deprecation", "unchecked"})
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args)
+    public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String s,
+                             @Nonnull String[] args)
     {
-        List<Integer> airBlockList = (List<Integer>) plugin.getConfig().getList("WailaBlacklist");
-        HashSet<Byte> airBlocks = new HashSet<>();
-        for (int airBlock : airBlockList)
+        List<String> airBlockList = (List<String>) plugin.getConfig().getList("WailaBlacklist");
+        HashSet<Material> airBlocks = new HashSet<>();
+        if (airBlockList != null)
         {
-            airBlocks.add((byte) airBlock);
+            for (String airBlock : airBlockList)
+            {
+                Material material = Material.getMaterial(airBlock);
+                if (material != null)
+                {
+                    airBlocks.add(material);
+                }
+            }
         }
-        airBlocks.add((byte) 0);
-        airBlocks.add((byte) 1316);
+        airBlocks.add(Material.AIR);
         //techversion
         if (command.getName().equalsIgnoreCase(techVersion))
         {
             sender.sendMessage(ChatColor.GREEN + "Techpoints Version: " + plugin.getDescription().getVersion());
-            return true;
         }
         //techconfig
         else if (command.getName().equalsIgnoreCase(techConfig))
@@ -73,18 +79,15 @@ public class Commands implements Listener, CommandExecutor
                     plugin.reloadConfig();
                     plugin.getConfigManager().reloadTechPoints();
                     sender.sendMessage(ChatColor.GREEN + "config reloaded.");
-                    return true;
                 }
                 else
                 {
                     sender.sendMessage(ChatColor.RED + "invalid arguments.");
-                    return true;
                 }
             }
             else
             {
                 sender.sendMessage(ChatColor.RED + "" + command.getPermissionMessage());
-                return true;
             }
         }
         //techchunk
@@ -92,22 +95,20 @@ public class Commands implements Listener, CommandExecutor
         {
             if (!(sender instanceof Player))
             {
-                Chunk chunk = plugin.getServer().getWorld("world").getChunkAt(Integer.parseInt(args[0]),
-                                                                              Integer.parseInt(args[1]));
+                Chunk chunk = Objects.requireNonNull(plugin.getServer().getWorld("world"))
+                        .getChunkAt(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
                 TechChunk techChunk = plugin
                         .getModuleHandler()
                         .getTechpointsModule()
                         .techPoints(chunk);
                 plugin.getModuleHandler().getDatabaseModule().addChunk(techChunk.getChunk().getX(),
-                                                                       techChunk.getChunk().getZ(),
-                                                                       techChunk.getMinTechPoints(),
-                                                                       techChunk.getMaxTechPoints());
-                return true;
+                        techChunk.getChunk().getZ(),
+                        techChunk.getMinTechPoints(),
+                        techChunk.getMaxTechPoints());
             }
             else
             {
                 sender.sendMessage(ChatColor.RED + command.getPermissionMessage() + ".");
-                return true;
             }
         }
         //techlimit
@@ -122,22 +123,22 @@ public class Commands implements Listener, CommandExecutor
                 }
                 //command /techlimit page next
                 if (args.length == 2
-                    && (args[0].equalsIgnoreCase("page") || args[0].equalsIgnoreCase("pg"))
-                    && (args[1].equalsIgnoreCase("next")))
+                        && (args[0].equalsIgnoreCase("page") || args[0].equalsIgnoreCase("pg"))
+                        && (args[1].equalsIgnoreCase("next")))
                 {
                     plugin.getModuleHandler().getTechLimitModule().pageNext(sender);
                 }
                 //command /techlimit page previous
                 else if (args.length == 2
-                         && (args[0].equalsIgnoreCase("page") || args[0].equalsIgnoreCase("pg"))
-                         && (args[1].equalsIgnoreCase("previous")))
+                        && (args[0].equalsIgnoreCase("page") || args[0].equalsIgnoreCase("pg"))
+                        && (args[1].equalsIgnoreCase("previous")))
                 {
                     plugin.getModuleHandler().getTechLimitModule().pagePrevious(sender);
                 }
                 //command /techlimit page <number>
                 else if (args.length == 2
-                         && (args[0].equalsIgnoreCase("page") || args[0].equalsIgnoreCase("pg"))
-                         && (args[1].matches("\\d*")))
+                        && (args[0].equalsIgnoreCase("page") || args[0].equalsIgnoreCase("pg"))
+                        && (args[1].matches("\\d*")))
                 {
                     plugin.getModuleHandler().getTechLimitModule().setPage(sender, Integer.parseInt(args[1]));
                 }
@@ -152,21 +153,21 @@ public class Commands implements Listener, CommandExecutor
 
                     for (Map.Entry<Vector2d, Vector2d> entry : query.get(pageIndex - 1))
                     {
-                        if(entry.getValue().getX() > 200)
+                        if (entry.getValue().getX() > 200)
                         {
                             sender.sendMessage(ChatColor.AQUA + "chunk " + entry.getKey() + " has " + ChatColor.RED
-                                               + entry.getValue().getX() + " to " + entry.getValue().getZ() +
-                                               ChatColor.AQUA + " techpoints.");
+                                    + entry.getValue().getX() + " to " + entry.getValue().getZ() +
+                                    ChatColor.AQUA + " techpoints.");
                         }
                         else
                         {
                             sender.sendMessage(ChatColor.AQUA + "chunk " + entry.getKey() + " has " + ChatColor.YELLOW
-                                               + entry.getValue().getX() + " to " + entry.getValue().getZ() +
-                                               ChatColor.AQUA + " techpoints.");
+                                    + entry.getValue().getX() + " to " + entry.getValue().getZ() +
+                                    ChatColor.AQUA + " techpoints.");
                         }
                     }
                 }
-                else if(pageIndex > query.size())
+                else if (pageIndex > query.size())
                 {
                     sender.sendMessage(ChatColor.RED + "there is no next page.");
                     plugin.getModuleHandler().getTechLimitModule().setPage(sender, query.size());
@@ -176,102 +177,85 @@ public class Commands implements Listener, CommandExecutor
                     sender.sendMessage(ChatColor.RED + "there is no previous page.");
                     plugin.getModuleHandler().getTechLimitModule().setPage(sender, 1);
                 }
-                return true;
             }
             else
             {
                 sender.sendMessage(ChatColor.RED + "" + command.getPermissionMessage());
-                return true;
             }
         }
         //player check
         else if (!(sender instanceof Player))
         {
             sender.sendMessage(ChatColor.RED + "This command can only be used by players!");
-            return true;
         }
         //techpoints commands
         else if (command.getName().equalsIgnoreCase(techPoints))
         {
             //main techpoints command
-            if (args.length == 0)
+            if (sender.hasPermission("techpoints.techpoints"))
             {
-                if (sender.hasPermission("techpoints.techpoints"))
+                TechChunk techChunk = plugin
+                        .getModuleHandler()
+                        .getTechpointsModule()
+                        .techPoints((Player) sender);
+                plugin.getModuleHandler().getTechpointsModule()
+                        .techPointsMessages(techChunk, (Player) sender, 1);
+                plugin.getModuleHandler().getDatabaseModule().addChunk(techChunk.getChunk().getX(),
+                        techChunk.getChunk().getZ(),
+                        techChunk.getMinTechPoints(),
+                        techChunk.getMaxTechPoints());
+            }
+            else
+            {
+                sender.sendMessage(ChatColor.RED + command.getPermissionMessage());
+            }
+        }
+        //techwaila
+        else if (command.getName().equalsIgnoreCase(techWaila))
+        {
+            if (sender.hasPermission("techpoints.waila"))
+            {
+                Block waila = ((Player) sender).getTargetBlock(airBlocks, 5);
+                sender.sendMessage("name: " + waila.getType().name() + ", ID: "
+                        + waila.getType().name() + ":" + waila.getData());
+                BasicTechPointItem techPointItem = plugin.getConfigManager().configMatch(waila, null);
+                int tp = (techPointItem != null) ? techPointItem.getTechPoints() : 0;
+                if (tp == 0)
                 {
-                    TechChunk techChunk = plugin
-                            .getModuleHandler()
-                            .getTechpointsModule()
-                            .techPoints((Player) sender);
-                    plugin.getModuleHandler().getTechpointsModule()
-                            .techPointsMessages(techChunk, (Player) sender, 1);
-                    plugin.getModuleHandler().getDatabaseModule().addChunk(techChunk.getChunk().getX(),
-                                                                           techChunk.getChunk().getZ(),
-                                                                           techChunk.getMinTechPoints(),
-                                                                           techChunk.getMaxTechPoints());
-                    return true;
+                    sender.sendMessage("this block does not have tech points.");
                 }
                 else
                 {
-                    sender.sendMessage(ChatColor.RED + command.getPermissionMessage() + ".");
-                    return true;
+                    sender.sendMessage("block tech points: " + tp);
                 }
             }
             else
             {
-                switch (args[0])
+                sender.sendMessage(ChatColor.RED + command.getPermissionMessage());
+            }
+        }
+        //techhotbar
+        else if (command.getName().equalsIgnoreCase(techHotbar))
+        {
+            if (sender.hasPermission("techpoints.hotbar"))
+            {
+                ItemStack hotbar = ((Player) sender).getItemInHand();
+                sender.sendMessage("name: " + hotbar.getType().name() + ", ID: " + hotbar.getType().name()
+                        + ":" + hotbar.getDurability());
+                BasicTechPointItem techPointItem = plugin.getConfigManager().configMatch(null, hotbar);
+                int tp = (techPointItem != null) ? techPointItem.getTechPoints() : 0;
+                if (tp == 0)
                 {
-                    //techpoints waila
-                    case "waila":
-                        if (sender.hasPermission("techpoints.techpoints.waila"))
-                        {
-                            Block waila = ((Player) sender).getTargetBlock(airBlocks, 5);
-                            sender.sendMessage("name: " + waila.getType().name() + ", ID: " + waila.getTypeId()
-                                               + ":" + waila.getData());
-                            BasicTechPointItem techPointItem = plugin.getConfigManager().configMatch(waila, null);
-                            int tp = (techPointItem != null) ? techPointItem.getTechPoints() : 0;
-                            if (tp == 0)
-                            {
-                                sender.sendMessage("this block does not have tech points.");
-                            }
-                            else
-                            {
-                                sender.sendMessage("block tech points: " + tp);
-                            }
-                            return true;
-                        }
-                        else
-                        {
-                            sender.sendMessage(ChatColor.RED + command.getPermissionMessage() + " waila.");
-                            return true;
-                        }
-                        //techpoints hotbar
-                    case "hotbar":
-                        if (sender.hasPermission("techpoints.techpoints.hotbar"))
-                        {
-                            ItemStack hotbar = ((Player) sender).getItemInHand();
-                            sender.sendMessage("name: " + hotbar.getType().name() + ", ID: " + hotbar.getTypeId()
-                                               + ":" + hotbar.getDurability());
-                            BasicTechPointItem techPointItem = plugin.getConfigManager().configMatch(null, hotbar);
-                            int tp = (techPointItem != null) ? techPointItem.getTechPoints() : 0;
-                            if (tp == 0)
-                            {
-                                sender.sendMessage("this block does not have tech points.");
-                            }
-                            else
-                            {
-                                sender.sendMessage("block tech points: " + tp);
-                            }
-                            return true;
-                        }
-                        else
-                        {
-                            sender.sendMessage(ChatColor.RED + command.getPermissionMessage() + " hotbar.");
-                            return true;
-                        }
-                    default:
-                        sender.sendMessage(ChatColor.RED + "invalid syntax.");
-                        return true;
+                    sender.sendMessage("this block does not have tech points.");
                 }
+                else
+                {
+                    sender.sendMessage("block tech points: " + tp);
+                }
+            }
+            else
+            {
+                sender.sendMessage(ChatColor.RED + command.getPermissionMessage());
             }
         }
         //techlist
@@ -284,29 +268,28 @@ public class Commands implements Listener, CommandExecutor
                 plugin.getModuleHandler().getTechpointsModule()
                         .techPointsMessages(techChunk, (Player) sender, 2);
                 plugin.getModuleHandler().getDatabaseModule().addChunk(techChunk.getChunk().getX(),
-                                                                       techChunk.getChunk().getZ(),
-                                                                       techChunk.getMinTechPoints(),
-                                                                       techChunk.getMaxTechPoints());
-                return true;
+                        techChunk.getChunk().getZ(),
+                        techChunk.getMinTechPoints(),
+                        techChunk.getMaxTechPoints());
             }
             else
             {
                 sender.sendMessage(ChatColor.RED + "" + command.getPermissionMessage());
-                return true;
             }
         }
         //techwand
         else if (command.getName().equalsIgnoreCase(techWand))
         {
-            ItemStack wand = new ItemStack(plugin.getConfig().getInt("techwand.id"), 1,
-                                           (short) plugin.getConfig().getInt("techwand.metadata"));
+            ItemStack wand = new ItemStack(Objects.requireNonNull(Material.getMaterial(
+                    Objects.requireNonNull(plugin.getConfig().getString("techwand.id")))), 1,
+                    (short) plugin.getConfig().getInt("techwand.metadata"));
             if (sender.hasPermission("techpoints.techwand"))
             {
                 if (args.length > 0 && args[0].equalsIgnoreCase("count"))
                 {
                     plugin.getModuleHandler().getWandModule().regionTechpoints((Player) sender);
                 }
-                else if(!((Player) sender).getInventory().contains(wand.getType()))
+                else if (!((Player) sender).getInventory().contains(wand.getType()))
                 {
                     if (((Player) sender).getItemInHand().getType() == Material.AIR)
                     {
@@ -317,15 +300,16 @@ public class Commands implements Listener, CommandExecutor
                         ((Player) sender).getInventory().addItem(wand);
                     }
                 }
-                return true;
             }
             else
             {
                 sender.sendMessage(ChatColor.RED + "" + command.getPermissionMessage());
-                return true;
             }
         }
-
-        return false;
+        else
+        {
+            return false;
+        }
+        return true;
     }
 }

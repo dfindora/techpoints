@@ -1,5 +1,5 @@
 name: Techpoints
-version: 1.1.0
+version: 1.2.0
 author: cobra0798
 description: calculates the tech point values for each chunk the player is standing in.
 main: com.goldensands.bukkit.main.Techpoints
@@ -10,17 +10,19 @@ commands:
         description: counts the techpoints in the current chunk.
         aliases: [tpts, tpoints]
         permission: techpoints.techpoints
-        permission-message: you don't have permission to use /techpoints
-    techpoints.waila:
+        permission-message: you don't have permission to use /techpoints.
+    techwaila:
         usage: /<command>
         description: returns the name, ID, metadata and tech point value of the block you are looking at.
-        permission: techpoints.techpoints.waila
-        permission-message: you don't have permission to use /techpoints waila.
-    techpoints.hotbar:
+        aliases: [twaila, tw]
+        permission: techpoints.waila
+        permission-message: you don't have permission to use /techwaila.
+    techhotbar:
         usage: /<command>
         description: returns the name, ID, metadata and tech point vlaue of the item in your hand.
-        permission: techpoints.techpoints.hotbar
-        permission-message: you don't have permission to use /techpoints hotbar.
+        aliases: [thotbar, thb]
+        permission: techpoints.hotbar
+        permission-message: you don't have permission to use /techhotbar.
     techlist:
         usage: /<command>
         description: provides a list of techpoint blocks in this chunk, along with their value and location.
@@ -48,12 +50,12 @@ commands:
     techchunk:
         usage: /<command> [x] [z]
         description: check the techpoints of a specific chunk.
-        aliases: [tchunk, tchnk]
+        aliases: [tchunk]
         permission: techpoints.techchunk
         permission-message: you do not have permission to use /techchunk.
     techversion:
         usage: /<command>
         description: returns the version of Techpoints.
-        aliases: [tversion]
+        aliases: [tversion, tv]
         permission: techpoints.techversion
         permission-message: you do not have permission to use /techversion.

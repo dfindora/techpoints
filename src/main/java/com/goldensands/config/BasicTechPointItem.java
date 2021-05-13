@@ -2,12 +2,12 @@ package com.goldensands.config;
 
 public class BasicTechPointItem implements Comparable<BasicTechPointItem>
 {
-    private int id;
+    private final String id;
     private int data;
-    private int techPoints;
-    private String name;
+    private final int techPoints;
+    private final String name;
 
-    public BasicTechPointItem(int id, int data, int techPoints, String name)
+    public BasicTechPointItem(String id, int data, int techPoints, String name)
     {
         this.id = id;
         this.data = data;
@@ -15,7 +15,7 @@ public class BasicTechPointItem implements Comparable<BasicTechPointItem>
         this.name = name;
     }
 
-    public int getId()
+    public String getId()
     {
         return id;
     }
@@ -50,14 +50,10 @@ public class BasicTechPointItem implements Comparable<BasicTechPointItem>
     public int compareTo(BasicTechPointItem compareTo)
     {
         int result = 0;
+        if (!id.equals(compareTo.id))
+        {
 
-        if (id < compareTo.id)
-        {
             result = -1;
-        }
-        else if (id > compareTo.id)
-        {
-            result = 1;
         }
         else
         {

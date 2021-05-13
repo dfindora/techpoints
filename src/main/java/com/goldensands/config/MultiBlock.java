@@ -2,9 +2,9 @@ package com.goldensands.config;
 
 public class MultiBlock extends BasicTechPointItem
 {
-    private int numOfBlocks;
+    private final int numOfBlocks;
 
-    MultiBlock(int id, int data, int techPoints, int numOfBlocks, String name)
+    MultiBlock(String id, int data, int techPoints, int numOfBlocks, String name)
     {
         super(id, data, techPoints, name);
         this.numOfBlocks = numOfBlocks;

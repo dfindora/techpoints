@@ -16,7 +16,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public class EventListener implements Listener
 {
-    private Techpoints plugin;
+    private final Techpoints plugin;
 
     public EventListener(Techpoints plugin)
     {
@@ -70,11 +70,10 @@ public class EventListener implements Listener
         }
     }
 
-    @SuppressWarnings("deprecation")
     @EventHandler
     public void onInteract(PlayerInteractEvent event)
     {
-        if(event.getItem() != null && event.getItem().getTypeId() == plugin.getConfig().getInt("techwand.id")
+        if(event.getItem() != null && event.getItem().getType().name().equals(plugin.getConfig().getString("techwand.id"))
            && event.getItem().getDurability() == plugin.getConfig().getInt("techwand.metadata")
            && event.getPlayer().hasPermission("techpoints.techwand"))
         {

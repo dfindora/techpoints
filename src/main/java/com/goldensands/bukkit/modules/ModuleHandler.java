@@ -7,7 +7,7 @@ import com.goldensands.bukkit.main.Techpoints;
  */
 public class ModuleHandler
 {
-    private Techpoints plugin;
+    private final Techpoints plugin;
     private TechpointsModule techpointsModule;
     private WandModule wandModule;
     private DatabaseModule databaseModule;
