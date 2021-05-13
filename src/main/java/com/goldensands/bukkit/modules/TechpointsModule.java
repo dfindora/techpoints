@@ -153,7 +153,6 @@ public class TechpointsModule
      */
     public void techPointsMessages(TechChunk techChunk, Player sender, int messageLevel)
     {
-        Logger logger = plugin.getLogger();
         //MultiBlock crossing chunks notification
         for(Map.Entry<MultiBlock, Integer> multiBlockCount : techChunk.getMultiBlockCounts().entrySet())
         {
