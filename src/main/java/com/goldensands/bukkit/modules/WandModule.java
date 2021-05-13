@@ -12,10 +12,12 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class WandModule
 {
-    private Techpoints plugin;
+    private final Techpoints plugin;
     HashMap<UUID, Vector3d> firstPositions;
     HashMap<UUID, Vector3d> secondPositions;
 
@@ -58,89 +60,31 @@ public class WandModule
         ArrayList<Chunk> chunks = new ArrayList<>();
         Vector3d pos1 = firstPositions.getOrDefault(player.getUniqueId(), null);
         Vector3d pos2 = secondPositions.getOrDefault(player.getUniqueId(), null);
+        //if both positions are set
         if(pos1 != null && pos2 != null)
         {
-            if (pos1.getX() <= pos2.getX() && pos1.getZ() <= pos2.getZ())
+            double pos1x = Math.min(pos1.getX(), pos2.getX());
+            double pos2x = Math.max(pos1.getX(), pos2.getX());
+            double pos1z = Math.min(pos1.getZ(), pos2.getZ());
+            double pos2z = Math.max(pos1.getZ(), pos2.getZ());
+            if (pos1x <= pos2x && pos1z <= pos2z)
             {
-                for (double x = pos1.getX(); x <= pos2.getX(); x += 16)
+                for (double x = pos1x; x <= pos2x; x += 16)
                 {
-                    for (double z = pos1.getZ(); z <= pos2.getZ(); z += 16)
+                    for (double z = pos1z; z <= pos2z; z += 16)
                     {
                         Location location = new Location(world, x, pos1.getY(), z);
                         chunks.add(world.getChunkAt(location));
-                        //check if pos2.getZ is in a different chunk and would be passed up normally
-                        if (z != pos2.getZ() && z + 16 > pos2.getZ() && (int) (pos2.getZ() / 16) != (int) (pos1.getZ() / 16))
+                        //check if pos2z is in a different chunk and would be passed up normally
+                        if (z != pos2z && z + 16 > pos2z && (int) (pos2z / 16) != (int) (z / 16))
                         {
-                            z = pos2.getZ() - 16;
+                            z = pos2z - 16;
                         }
                     }
                     //check if pos2.getX is in a different chunk and would be passed up normally
-                    if (x != pos2.getX() && x + 16 > pos2.getX() && (int) (pos2.getX() / 16) != (int) (pos1.getX() / 16))
+                    if (x != pos2x && x + 16 > pos2x && (int) (pos2x / 16) != (int) (x / 16))
                     {
-                        x = pos2.getX() - 16;
-                    }
-                }
-            }
-            else if (pos1.getX() <= pos2.getX())
-            {
-                for (double x = pos1.getX(); x <= pos2.getX(); x += 16)
-                {
-                    for (double z = pos1.getZ(); z >= pos2.getZ(); z -= 16)
-                    {
-                        Location location = new Location(world, x, pos1.getY(), z);
-                        chunks.add(world.getChunkAt(location));
-                        //check if pos2.getZ is in a different chunk and would be passed up normally
-                        if (z != pos2.getZ() && z - 16 < pos2.getZ() && (int) (pos2.getZ() / 16) != (int) (pos1.getZ() / 16))
-                        {
-                            z = pos2.getZ() + 16;
-                        }
-                    }
-                    //check if pos2.getX is in a different chunk and would be passed up normally
-                    if (x != pos2.getX() && x + 16 > pos2.getX() && (int) (pos2.getX() / 16) != (int) (pos1.getX() / 16))
-                    {
-                        x = pos2.getX() - 16;
-                    }
-                }
-            }
-            else if(pos1.getZ() <= pos2.getZ())
-            {
-                for (double x = pos1.getX(); x >= pos2.getX(); x -= 16)
-                {
-                    for (double z = pos1.getZ(); z <= pos2.getZ(); z += 16)
-                    {
-                        Location location = new Location(world, x, pos1.getY(), z);
-                        chunks.add(world.getChunkAt(location));
-                        //check if pos2.getZ is in a different chunk and would be passed up normally
-                        if (z != pos2.getZ() && z + 16 > pos2.getZ() && (int) (pos2.getZ() / 16) != (int) (pos1.getZ() / 16))
-                        {
-                            z = pos2.getZ() - 16;
-                        }
-                    }
-                    //check if pos2.getX is in a different chunk and would be passed up normally
-                    if (x != pos2.getX() && x - 16 < pos2.getX() && (int) (pos2.getX() / 16) != (int) (pos1.getX() / 16))
-                    {
-                        x = pos2.getX() + 16;
-                    }
-                }
-            }
-            else
-            {
-                for (double x = pos1.getX(); x >= pos2.getX(); x -= 16)
-                {
-                    for (double z = pos1.getZ(); z >= pos2.getZ(); z -= 16)
-                    {
-                        Location location = new Location(world, x, pos1.getY(), z);
-                        chunks.add(world.getChunkAt(location));
-                        //check if pos2.getZ is in a different chunk and would be passed up normally
-                        if (z != pos2.getZ() && z - 16 < pos2.getZ() && (int) (pos2.getZ() / 16) != (int) (pos1.getZ() / 16))
-                        {
-                            z = pos2.getZ() + 16;
-                        }
-                    }
-                    //check if pos2.getX is in a different chunk and would be passed up normally
-                    if (x != pos2.getX() && x - 16 < pos2.getX() && (int) (pos2.getX() / 16) != (int) (pos1.getX() / 16))
-                    {
-                        x = pos2.getX() + 16;
+                        x = pos2x - 16;
                     }
                 }
             }
