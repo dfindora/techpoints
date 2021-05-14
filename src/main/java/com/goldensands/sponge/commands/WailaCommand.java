@@ -50,14 +50,21 @@ public class WailaCommand implements CommandExecutor {
                     }
                     BlockState block = hit.getLocation().getBlock();
                     Optional<BlockTrait<?>> blockTrait = block.getTrait("variant");
-                    if(blockTrait.isPresent())
+//                    if(blockTrait.isPresent())
+//                    {
+//                        Optional<?> variant = block.getTraitValue(blockTrait.get());
+//                        variant.ifPresent(o -> src.sendMessage(Text.of(TextColors.AQUA, "variant = " + o.toString())));
+//                    }
+//                    else
+//                    {
+//                        src.sendMessage(Text.of(TextColors.RED, "This block contains no variants."));
+//                    }
+                    Collection<BlockTrait<?>> blockTraits = block.getTraits();
+                    for (BlockTrait<?> trait : blockTraits)
                     {
-                        Optional<?> variant = block.getTraitValue(blockTrait.get());
-                        variant.ifPresent(o -> src.sendMessage(Text.of(TextColors.AQUA, "variant = " + o.toString())));
-                    }
-                    else
-                    {
-                        src.sendMessage(Text.of(TextColors.RED, "This block contains no variants."));
+                        src.sendMessage(Text.of(TextColors.AQUA, "trait: " + trait.getName()));
+                        src.sendMessage(Text.of(TextColors.AQUA, "value: " + block.getTraitValue(trait)));
+                        src.sendMessage(Text.of(TextColors.AQUA, "possible values: " + trait.getPossibleValues()));
                     }
                 }
                 i++;
