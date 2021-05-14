@@ -3,8 +3,8 @@ MaxTechPoints: 200
 WailaBlacklist:
   - AIR
 techwand:
-  id: 4894
-  metadata: 3
+  id: IRON_HOE
+  metadata: 0
 
 Spawners:
   #any cursed earth from 1 to <size> will count as one techpoint value.

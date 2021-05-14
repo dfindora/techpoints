@@ -35,6 +35,7 @@ public class WailaCommand implements CommandExecutor {
             boolean found = false;
             int limit = 50;
             int i = 0;
+            src.sendMessage(Text.of(TextColors.YELLOW, "------------TRAITS------------"));
             while(blockRay.hasNext() && !found && i < limit)
             {
                 BlockRayHit<World> hit = blockRay.next();
