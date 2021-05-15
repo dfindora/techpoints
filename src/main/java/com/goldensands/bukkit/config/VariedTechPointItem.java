@@ -1,4 +1,4 @@
-package com.goldensands.config;
+package com.goldensands.bukkit.config;
 
 public class VariedTechPointItem extends BasicTechPointItem
 {

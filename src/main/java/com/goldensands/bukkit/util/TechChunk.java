@@ -1,7 +1,7 @@
 package com.goldensands.bukkit.util;
 
-import com.goldensands.config.BasicTechPointItem;
-import com.goldensands.config.MultiBlock;
+import com.goldensands.bukkit.config.BasicTechPointItem;
+import com.goldensands.bukkit.config.MultiBlock;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 

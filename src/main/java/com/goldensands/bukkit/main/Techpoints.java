@@ -1,6 +1,6 @@
 package com.goldensands.bukkit.main;
 
-import com.goldensands.config.SpigotConfigManager;
+import com.goldensands.bukkit.config.SpigotConfigManager;
 import com.goldensands.bukkit.events.EventListener;
 import com.goldensands.bukkit.modules.ModuleHandler;
 import org.bukkit.ChatColor;

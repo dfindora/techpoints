@@ -1,4 +1,4 @@
-package com.goldensands.config;
+package com.goldensands.bukkit.config;
 
 import com.goldensands.bukkit.main.Techpoints;
 import org.bukkit.Bukkit;

@@ -1,8 +1,8 @@
 package com.goldensands.bukkit.modules;
 
-import com.goldensands.config.BasicTechPointItem;
-import com.goldensands.config.MultiBlock;
-import com.goldensands.config.VariedTechPointItem;
+import com.goldensands.bukkit.config.BasicTechPointItem;
+import com.goldensands.bukkit.config.MultiBlock;
+import com.goldensands.bukkit.config.VariedTechPointItem;
 import com.goldensands.bukkit.main.Techpoints;
 import com.goldensands.bukkit.util.TechChunk;
 import org.bukkit.ChatColor;
