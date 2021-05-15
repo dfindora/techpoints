@@ -16,9 +16,16 @@ public class VersionCommand implements CommandExecutor {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args)
     {
-        src.sendMessage(Text.of(TextColors.YELLOW, "Techpoints version: "
-                + Objects.requireNonNull(Sponge.getPluginManager()
-                .getPlugin("techpoints").orElse(null)).getVersion().orElse(null)));
+        if (src.hasPermission("techpoints.techversion"))
+        {
+            src.sendMessage(Text.of(TextColors.YELLOW, "Techpoints version: "
+                    + Objects.requireNonNull(Sponge.getPluginManager()
+                    .getPlugin("techpoints").orElse(null)).getVersion().orElse(null)));
+        }
+        else
+        {
+            src.sendMessage(Text.of(TextColors.RED, "You do not have permission to execute /techversion."));
+        }
         return CommandResult.success();
     }
 }
