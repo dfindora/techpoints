@@ -27,6 +27,8 @@ public class SpongeConfigManager
 {
     private final PluginContainer plugin;
     private final Path privateConfigDir;
+    private final Path mainConfigPath;
+    private final Path techpointsConfigPath;
     ConfigurationNode configRoot;
     List<TechPointItem> techPointItems;
     List<MultiBlock> multiBlocks;
@@ -35,6 +37,10 @@ public class SpongeConfigManager
     {
         this.plugin = plugin;
         privateConfigDir = Sponge.getConfigManager().getPluginConfig(plugin).getConfigPath().getParent();
+        mainConfigPath = new File(privateConfigDir.toAbsolutePath().toString() + File.separator
+                + "config.conf").toPath();
+        techpointsConfigPath = new File(privateConfigDir.toAbsolutePath().toString() + File.separator
+                + "techpoints.conf").toPath();
     }
 
     public void setup()
@@ -43,12 +49,6 @@ public class SpongeConfigManager
         TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(TechPointItem.class), new TechPointItemSerializer());
         TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(MultiBlock.class), new MultiBlockSerializer());
         TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(Trait.class), new TraitSerializer());
-
-        //config paths
-        Path mainConfigPath = new File(privateConfigDir.toAbsolutePath().toString() + File.separator
-                + "config.conf").toPath();
-        Path techpointsConfigPath = new File(privateConfigDir.toAbsolutePath().toString() + File.separator
-                + "techpoints.conf").toPath();
 
         Sponge.getServer().getConsole().sendMessage(Text.of(TextColors.AQUA, "config directory = "
                 + privateConfigDir.toAbsolutePath()));
@@ -64,7 +64,7 @@ public class SpongeConfigManager
                     .orElse(null))
                     .copyToFile(techpointsConfigPath, false, true);
 
-            loadTechPoints(mainConfigPath, techpointsConfigPath);
+            loadTechPoints();
             Sponge.getServer().getConsole().sendMessage(Text.of(TextColors.AQUA, "Config.conf loaded."));
             Sponge.getServer().getConsole().sendMessage(Text.of(TextColors.AQUA, "Techpoints.conf loaded."));
 
@@ -79,14 +79,14 @@ public class SpongeConfigManager
         }
     }
 
-    public void reloadTechPoints(Path mainConfigPath, Path techpointsConfigPath)
+    public void reloadTechPoints()
     {
-        loadTechPoints(mainConfigPath, techpointsConfigPath);
+        loadTechPoints();
         Sponge.getServer().getConsole().sendMessage(Text.of(TextColors.AQUA, "Config.conf reloaded."));
         Sponge.getServer().getConsole().sendMessage(Text.of(TextColors.AQUA, "Techpoints.conf reloaded."));
     }
 
-    private void loadTechPoints(Path mainConfigPath, Path techpointsConfigPath)
+    private void loadTechPoints()
     {
         try
         {

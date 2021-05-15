@@ -2,10 +2,13 @@ package com.goldensands.sponge;
 
 //import com.goldensands.sponge.commands.TechpointsCommand;
 
+import com.goldensands.sponge.commands.ConfigCommand;
 import com.goldensands.sponge.commands.VersionCommand;
 import com.goldensands.sponge.commands.WailaCommand;
 import com.goldensands.sponge.config.SpongeConfigManager;
+import com.goldensands.sponge.modules.ModuleHandler;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
@@ -23,6 +26,7 @@ public class Techpoints
     PluginContainer plugin = Objects.requireNonNull(Sponge.getPluginManager()
             .getPlugin("techpoints").orElse(null));
     SpongeConfigManager configManager;
+    ModuleHandler moduleHandler;
 
     CommandSpec versionCommand = CommandSpec.builder()
             .description(Text.of("Techpoints version command."))
@@ -34,11 +38,19 @@ public class Techpoints
             .permission("techpoints.techwaila")
             .executor(new WailaCommand(this))
             .build();
+    CommandSpec configCommand = CommandSpec.builder()
+            .description(Text.of("controls the config."))
+            .permission("techpoints.techconfig")
+            .executor(new ConfigCommand(this))
+            .arguments(
+                    GenericArguments.onlyOne(GenericArguments.string(Text.of("type")))
+            )
+            .build();
 /*
     CommandSpec techpointsCommand = CommandSpec.builder()
             .description(Text.of("main techpoints command."))
             .permission("techpoints.techpoints")
-            .executor(new TechpointsCommand())
+            .executor(new TechpointsCommand(this))
             .child(wailaCommand, "waila")
             .build();
 */
@@ -49,10 +61,13 @@ public class Techpoints
     {
         Sponge.getServer().getConsole().sendMessage(Text.of(TextColors.AQUA, "Techpoints started."));
         Sponge.getCommandManager().register(this, versionCommand, "techversion", "tversion", "tv");
-        //Sponge.getCommandManager().register(this, techpointsCommand, "techpoints", "tpoints", "tpts");
         Sponge.getCommandManager().register(this, wailaCommand, "techwaila", "twaila", "tw");
+        Sponge.getCommandManager().register(this, configCommand, "techconfig", "tconfig", "tcfg");
+        //Sponge.getCommandManager().register(this, techpointsCommand, "techpoints", "tpoints", "tpts");
         configManager = new SpongeConfigManager(plugin);
         configManager.setup();
+        moduleHandler = new ModuleHandler(this);
+        moduleHandler.setup();
     }
 
     @Listener
@@ -69,5 +84,10 @@ public class Techpoints
     public SpongeConfigManager getConfigManager()
     {
         return configManager;
+    }
+
+    public ModuleHandler getModuleHandler()
+    {
+        return moduleHandler;
     }
 }
