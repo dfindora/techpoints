@@ -2,7 +2,7 @@ package com.goldensands.bukkit.main;
 
 import com.goldensands.bukkit.config.BasicTechPointItem;
 import com.goldensands.bukkit.modules.TechChunk;
-import com.goldensands.bukkit.util.Vector2d;
+import com.goldensands.util.Vector2d;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Material;

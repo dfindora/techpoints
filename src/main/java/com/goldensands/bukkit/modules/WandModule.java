@@ -1,7 +1,7 @@
 package com.goldensands.bukkit.modules;
 
 import com.goldensands.bukkit.main.Techpoints;
-import com.goldensands.bukkit.util.Vector3d;
+import com.goldensands.util.Vector3d;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
