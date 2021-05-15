@@ -41,6 +41,9 @@ dependencies
             compile 'org.spongepowered:spongeapi:7.2.0'
             compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
             compileOnly fileTree(dir: 'libs', include: 'sqlite-jdbc-3.30.1.jar')
+            compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.8.8'
+            compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.8.8'
+            compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.8'
         }
 
 apply plugin: 'java'
