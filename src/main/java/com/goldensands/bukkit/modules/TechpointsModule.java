@@ -4,7 +4,6 @@ import com.goldensands.bukkit.config.BasicTechPointItem;
 import com.goldensands.bukkit.config.MultiBlock;
 import com.goldensands.bukkit.config.VariedTechPointItem;
 import com.goldensands.bukkit.main.Techpoints;
-import com.goldensands.bukkit.util.TechChunk;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Material;

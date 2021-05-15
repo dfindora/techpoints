@@ -1,4 +1,4 @@
-package com.goldensands.bukkit.util;
+package com.goldensands.bukkit.modules;
 
 import com.goldensands.bukkit.config.BasicTechPointItem;
 import com.goldensands.bukkit.config.MultiBlock;
