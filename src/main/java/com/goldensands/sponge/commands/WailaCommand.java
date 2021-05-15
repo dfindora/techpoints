@@ -1,5 +1,7 @@
 package com.goldensands.sponge.commands;
 
+import com.goldensands.sponge.Techpoints;
+import com.goldensands.sponge.config.TechPointItem;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.block.trait.BlockTrait;
@@ -16,11 +18,18 @@ import org.spongepowered.api.world.World;
 import org.spongepowered.plugin.meta.util.NonnullByDefault;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
 
 @NonnullByDefault
 public class WailaCommand implements CommandExecutor {
+
+    private final Techpoints plugin;
+
+    public WailaCommand(Techpoints plugin)
+    {
+        this.plugin = plugin;
+    }
+
     @Override
     public CommandResult execute(CommandSource  src, CommandContext args)
     {
@@ -51,21 +60,22 @@ public class WailaCommand implements CommandExecutor {
                     }
                     BlockState block = hit.getLocation().getBlock();
                     Optional<BlockTrait<?>> blockTrait = block.getTrait("variant");
-//                    if(blockTrait.isPresent())
-//                    {
-//                        Optional<?> variant = block.getTraitValue(blockTrait.get());
-//                        variant.ifPresent(o -> src.sendMessage(Text.of(TextColors.AQUA, "variant = " + o.toString())));
-//                    }
-//                    else
-//                    {
-//                        src.sendMessage(Text.of(TextColors.RED, "This block contains no variants."));
-//                    }
                     Collection<BlockTrait<?>> blockTraits = block.getTraits();
                     for (BlockTrait<?> trait : blockTraits)
                     {
                         src.sendMessage(Text.of(TextColors.AQUA, "trait: " + trait.getName()));
                         src.sendMessage(Text.of(TextColors.AQUA, "value: " + block.getTraitValue(trait)));
                         src.sendMessage(Text.of(TextColors.AQUA, "possible values: " + trait.getPossibleValues()));
+                    }
+                    TechPointItem techPointItem = plugin.getConfigManager().getTechPointItem(block);
+                    if(techPointItem != null)
+                    {
+                        src.sendMessage(Text.of(TextColors.BLUE, "Techpoints: " + techPointItem.getMinTechPoints()
+                                + " - " + techPointItem.getMaxTechPoints()));
+                    }
+                    else
+                    {
+                        src.sendMessage(Text.of(TextColors.RED, "This block has no techpoints."));
                     }
                 }
                 i++;
