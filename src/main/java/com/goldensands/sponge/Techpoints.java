@@ -1,10 +1,7 @@
 package com.goldensands.sponge;
 
-//import com.goldensands.sponge.commands.TechpointsCommand;
+import com.goldensands.sponge.commands.*;
 
-import com.goldensands.sponge.commands.ConfigCommand;
-import com.goldensands.sponge.commands.VersionCommand;
-import com.goldensands.sponge.commands.WailaCommand;
 import com.goldensands.sponge.config.SpongeConfigManager;
 import com.goldensands.sponge.modules.ModuleHandler;
 import org.spongepowered.api.Sponge;
@@ -46,14 +43,16 @@ public class Techpoints
                     GenericArguments.onlyOne(GenericArguments.string(Text.of("type")))
             )
             .build();
-/*
     CommandSpec techpointsCommand = CommandSpec.builder()
             .description(Text.of("main techpoints command."))
             .permission("techpoints.techpoints")
             .executor(new TechpointsCommand(this))
-            .child(wailaCommand, "waila")
             .build();
-*/
+    CommandSpec techListCommand = CommandSpec.builder()
+            .description(Text.of("lists off all blocks with techpoints in the current chunk."))
+            .permission("techpoints.techlist")
+            .executor(new TechListCommand(this))
+            .build();
 
 
     @Listener
@@ -63,7 +62,8 @@ public class Techpoints
         Sponge.getCommandManager().register(this, versionCommand, "techversion", "tversion", "tv");
         Sponge.getCommandManager().register(this, wailaCommand, "techwaila", "twaila", "tw");
         Sponge.getCommandManager().register(this, configCommand, "techconfig", "tconfig", "tcfg");
-        //Sponge.getCommandManager().register(this, techpointsCommand, "techpoints", "tpoints", "tpts");
+        Sponge.getCommandManager().register(this, techpointsCommand, "techpoints", "tpoints", "tpts");
+        Sponge.getCommandManager().register(this, techListCommand, "techlist", "tlist", "tlst");
         configManager = new SpongeConfigManager(plugin);
         configManager.setup();
         moduleHandler = new ModuleHandler(this);

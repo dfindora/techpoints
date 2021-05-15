@@ -133,13 +133,6 @@ public class SpongeConfigManager
 
     private boolean isBlock(BlockState block, TechPointItem techPointItem)
     {
-        Logger logger = plugin.getLogger();
-        logger.info("block: " + block.getType().getId());
-        for(BlockTrait<?> blockTrait : block.getTraits())
-        {
-            logger.info("trait: " + blockTrait.getName());
-            logger.info("value: " + block.getTraitValue(blockTrait).orElse(null));
-        }
         if (block.getType().getId().equals(techPointItem.getMaterial()))
         {
             int traitCount = 0;
