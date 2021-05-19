@@ -1,0 +1,61 @@
+name: Techpoints
+version: 1.2.0
+author: cobra0798
+description: calculates the tech point values for each chunk the player is standing in.
+main: com.goldensands.bukkit.main.Techpoints
+
+commands:
+    techpoints:
+        usage: /<command>
+        description: counts the techpoints in the current chunk.
+        aliases: [tpts, tpoints]
+        permission: techpoints.techpoints
+        permission-message: you don't have permission to use /techpoints.
+    techwaila:
+        usage: /<command>
+        description: returns the name, ID, metadata and tech point value of the block you are looking at.
+        aliases: [twaila, tw]
+        permission: techpoints.waila
+        permission-message: you don't have permission to use /techwaila.
+    techhotbar:
+        usage: /<command>
+        description: returns the name, ID, metadata and tech point vlaue of the item in your hand.
+        aliases: [thotbar, thb]
+        permission: techpoints.hotbar
+        permission-message: you don't have permission to use /techhotbar.
+    techlist:
+        usage: /<command>
+        description: provides a list of techpoint blocks in this chunk, along with their value and location.
+        aliases: [tlst, tlist]
+        permission: techpoints.techlist
+        permission-message: you don't have permission to use /techlist.
+    techlimit:
+        usage: /<command>
+        description: lists all chunks currently over the limit.
+        aliases: [tlmt, tlimit]
+        permission: techpoints.techlimit
+        permission-message: you don't have permission to use /techlimit.
+    techconfig:
+        usage: /<command> [reload]
+        description: reloads the config.
+        aliases: [tcnf, tcfg, tconfig]
+        permission: techpoints.techconfig
+        permission-message: you don't have permission to use /techconfig.
+    techwand:
+        usage: /<command>
+        description: spawns the wand used for counting techpoints in bulk.
+        aliases: [twand, twnd]
+        permission: techpoints.techwand
+        permission-message: you do not have permission to use /techwand.
+    techchunk:
+        usage: /<command> [x] [z]
+        description: check the techpoints of a specific chunk.
+        aliases: [tchunk]
+        permission: techpoints.techchunk
+        permission-message: you do not have permission to use /techchunk.
+    techversion:
+        usage: /<command>
+        description: returns the version of Techpoints.
+        aliases: [tversion, tv]
+        permission: techpoints.techversion
+        permission-message: you do not have permission to use /techversion.
